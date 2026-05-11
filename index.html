@@ -1311,7 +1311,7 @@ function renderKnockout() {
       return '<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--bdr);'
         +(isWinner?'background:rgba(26,79,138,0.05);':'')+'">'
         +'<span style="width:9px;height:9px;border-radius:50%;background:'+(team?team.color:'#ccc')+';flex-shrink:0;display:inline-block;"></span>'
-        +'<span style="flex:1;font-size:13px;font-weight:'+(isWinner?'700':'400')+';color:'+(tbd?'var(--mut)':'var(--nav)');font-style:'+(tbd?'italic':'normal')+';">'
+        +'<span style="flex:1;font-size:13px;font-weight:'+(isWinner?'700':'400')+';color:'+(tbd?'var(--mut)':'var(--nav)')+';font-style:'+(tbd?'italic':'normal')+';">'
         +(team?team.name:(side==='A'?'TBD':'TBD'))+'</span>'
         +(played?'<span style="font-size:14px;font-weight:700;color:'+(isWinner?'var(--acc2)':'var(--mut)')+';">'+pts+'</span>':'')
         +(isWinner?'<span style="font-size:10px;font-weight:700;color:var(--acc2);margin-left:4px;">W</span>':'')
