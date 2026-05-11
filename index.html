@@ -228,50 +228,7 @@ tbody tr:hover td{background:#f5f8ff;}
   </div>
 
   <div id="t-rules" class="sec">
-    <div style="max-width:620px;">
-      <p style="font-size:13px;color:var(--mut);line-height:1.8;margin-bottom:18px;">Cold call roleplay competition across all 7 EMEA DC teams. Each match uses a live unattempted Salesforce lead. <strong style="color:var(--nav);">Martina Aiello</strong> plays the prospect and acts as final decision-maker — same standard for every team.</p>
-      <div class="rblock">
-        <div class="rblockt">Match format</div>
-        <div class="rrow"><span>Players per match</span><span class="rm">2 BDRs per team — captains decide who plays</span></div>
-        <div class="rrow"><span>Consecutive rule</span><span class="rm">A player cannot participate in two consecutive matches</span></div>
-        <div class="rrow"><span>Turn order</span><span class="rm">Each player draws a number out of a hat. #1 goes first, #2 second, and so on.</span></div>
-        <div class="rrow"><span>The lead</span><span class="rm">Martina pulls a random unattempted Salesforce lead. Name, company, title and trigger revealed to all players simultaneously.</span></div>
-        <div class="rrow"><span>The opener</span><span class="rm">"Hey Sophie, my name is X from Qlik — I saw you downloaded our ebook. What was behind that?"</span></div>
-        <div class="rrow"><span>Match ends when</span><span class="rm">Only one player is left standing — or all remaining active players have each booked a meeting.</span></div>
-        <div class="rrow"><span>After the match</span><span class="rm">Default Salesforce lead owner follows up as normal. No pipeline disruption.</span></div>
-      </div>
-      <div class="rblock">
-        <div class="rblockt">Scoring</div>
-        <div class="rrow"><span>Player still standing at end</span><span class="rv">1 pt for their team</span></div>
-        <div class="rrow"><span>Meeting booked with Martina</span><span class="rv">2 pts for their team</span></div>
-        <div class="rrow"><span style="color:var(--mut);font-size:12px;">Disqualified player</span><span class="rm">0 pts</span></div>
-      </div>
-      <div class="rblock">
-        <div class="rblockt">Evaluation criteria</div>
-        <div class="rrow"><span style="font-size:12px;">1. Use of open-ended questions</span></div>
-        <div class="rrow"><span style="font-size:12px;">2. Speed and quality of follow-up questions</span></div>
-        <div class="rrow"><span style="font-size:12px;">3. Relevance of topics discussed</span></div>
-        <div class="rrow"><span style="font-size:12px;">4. Active listening and objection handling</span></div>
-        <div class="rrow"><span style="font-size:12px;">5. Ability to progress the conversation toward booking a meeting</span></div>
-      </div>
-      <div class="dbox dred">
-        <div class="dt">Disqualification — closed question</div>
-        <div class="db">Any yes/no question = instant elimination. Martina says "closed question" and stops.<br>
-        <span style="color:var(--dan);font-weight:600;">Out:</span> "Do you use Qlik?" · "Would Tuesday work?" · "Is data a problem?"<br>
-        <span style="color:var(--grn);font-weight:600;">Safe:</span> "What does your setup look like?" · "What's your calendar like next week?"</div>
-      </div>
-      <div class="dbox damb">
-        <div class="dt">Disqualification — 5-second hesitation</div>
-        <div class="db">Timekeeper counts aloud. If you haven't started speaking within 5 seconds, you are eliminated. No exceptions.</div>
-      </div>
-      <div class="rblock">
-        <div class="rblockt">Knockout phase</div>
-        <div class="rrow"><span>Qualification</span><span class="rm">Top 4 teams by points after all group matches</span></div>
-        <div class="rrow"><span>Format</span><span class="rm">SF1: 1st vs 4th · SF2: 2nd vs 3rd · Final</span></div>
-        <div class="rrow"><span>Players per match</span><span class="rm">2 per team — 4 total in one match</span></div>
-        <div class="rrow"><span>Tiebreaker</span><span class="rm">Most meetings booked → coin toss live in front of both teams</span></div>
-      </div>
-    </div>
+    <div class="loading"><div class="spin"></div>Loading rules...</div>
   </div>
 
 </div>
@@ -297,6 +254,7 @@ tbody tr:hover td{background:#f5f8ff;}
         <button class="mnb on" onclick="showMTab('m-results',this)">Enter Results</button>
         <button class="mnb" onclick="showMTab('m-sched',this)">Schedule Matches</button>
         <button class="mnb" onclick="showMTab('m-teams',this)">Edit Teams</button>
+        <button class="mnb" onclick="showMTab('m-rules-edit',this)">Edit Rules</button>
       </nav>
       <div class="mbody">
         <div id="m-results" class="msec on">
@@ -307,6 +265,9 @@ tbody tr:hover td{background:#f5f8ff;}
               </div>
               <div class="fg"><label>Lead used (name, company)</label>
                 <input type="text" id="lead-inp" placeholder="e.g. Sophie Müller, Bosch GmbH">
+              </div>
+              <div class="fg"><label>Lead link (Salesforce URL)</label>
+                <input type="text" id="lead-link-inp" placeholder="https://qlik.lightning.force.com/...">
               </div>
               <div id="chip-sec" style="display:none;">
                 <span class="sublbl">Players still standing — tap to mark (1 pt each)</span>
@@ -328,12 +289,15 @@ tbody tr:hover td{background:#f5f8ff;}
         <div id="m-sched" class="msec">
           <div class="g2">
             <div>
+              <div id="sched-edit-banner" style="display:none;background:rgba(26,79,138,0.08);border:1px solid rgba(26,79,138,0.2);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:var(--acc2);font-weight:700;">Editing match — <button onclick="cancelEditSched()" style="background:none;border:none;color:var(--mut);cursor:pointer;font-size:12px;font-weight:700;text-decoration:underline;">Cancel</button></div>
               <div class="fg"><label>Team A</label><select id="st1"></select></div>
               <div class="fg"><label>Team B</label><select id="st2"></select></div>
               <div class="fg"><label>Date</label><input type="date" id="sd"></div>
               <div class="fg"><label>Time (optional)</label><input type="time" id="st"></div>
+              <div class="fg"><label>Room / Location (optional)</label><input type="text" id="sroom" placeholder="e.g. Barcelona HQ — Meeting Room 3"></div>
+              <div class="fg"><label>Teams / Zoom link (optional)</label><input type="text" id="slink" placeholder="https://teams.microsoft.com/..."></div>
               <div class="fg"><label>Notes (optional)</label><input type="text" id="sn" placeholder="e.g. On the weekly all-hands call"></div>
-              <button class="sbtn" onclick="addSched()">Add to schedule</button>
+              <button class="sbtn" id="sched-submit-btn" onclick="submitSched()">Add to schedule</button>
             </div>
             <div>
               <div style="font-size:13px;font-weight:700;color:var(--nav);margin-bottom:12px;">Scheduled matches</div>
@@ -342,9 +306,12 @@ tbody tr:hover td{background:#f5f8ff;}
           </div>
         </div>
         <div id="m-teams" class="msec">
-          <p style="font-size:12px;color:var(--mut);margin-bottom:16px;line-height:1.6;">Edit team names, colors, captains and players. Click Save all teams when done — updates go live for everyone immediately.</p>
-          <div id="team-editor" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;"></div>
-          <button class="sbtn" style="margin-top:16px;max-width:200px;" onclick="saveTeams()">Save all teams</button>
+          <p style="font-size:12px;color:var(--mut);margin-bottom:16px;line-height:1.6;">Edit team names, colors, captains and players. Changes save automatically as you type.</p>
+          <div id="team-editor"></div>
+        </div>
+        <div id="m-rules-edit" class="msec">
+          <p style="font-size:12px;color:var(--mut);margin-bottom:16px;line-height:1.6;">Edit the competition rules shown on the public Rules tab. Changes save automatically as you type.</p>
+          <div id="rules-editor"></div>
         </div>
       </div>
     </div>
@@ -425,13 +392,14 @@ function loadData() {
       results = d.results||[];
       schedules = d.schedules||[];
       if (d.teams&&d.teams.length) TEAMS = d.teams;
+      if (d.customRules) customRules = d.customRules;
       renderAll();
     });
   }
 }
 
 function saveData(cb) {
-  apiFetch('https://api.jsonbin.io/v3/b/'+binId, {method:'PUT', body:JSON.stringify({results:results,schedules:schedules,teams:TEAMS})}, function(err) {
+  apiFetch('https://api.jsonbin.io/v3/b/'+binId, {method:'PUT', body:JSON.stringify({results:results,schedules:schedules,teams:TEAMS,customRules:customRules})}, function(err) {
     if (err) { toast('Save failed','err'); return; }
     if (cb) cb();
   });
@@ -520,8 +488,12 @@ function renderTeams() {
 }
 
 function renderAll() {
-  renderStandings(); renderFixtures(); renderTeams();
-  if (isAdmin) { populateMatchSel(); renderLog(); renderSchedList(); renderTeamEditor(); populateSchedSelects(); }
+  renderStandings(); renderFixtures(); renderTeams(); renderRulesPublic();
+  if (isAdmin) {
+    populateMatchSel(); renderLog(); renderSchedList(); populateSchedSelects();
+    var teamsTab = document.getElementById('m-teams');
+    if (!teamsTab || teamsTab.className.indexOf('on') === -1) { renderTeamEditor(); }
+  }
 }
 
 function showTab(id,btn) {
@@ -542,6 +514,7 @@ function doLogin() {
   document.getElementById('admin-login').style.display='none';
   document.getElementById('admin-app').style.display='block';
   populateMatchSel(); renderLog(); renderSchedList(); renderTeamEditor(); populateSchedSelects();
+  renderRulesEditor();
 }
 
 function showMTab(id,btn) {
@@ -598,13 +571,15 @@ function saveResult() {
   sc.forEach(function(c){if(c.dataset.tid===f[1])surv1.push(c.dataset.p);else surv2.push(c.dataset.p);});
   mc.forEach(function(c){if(c.dataset.tid===f[1])meet1++;else meet2++;});
   var lead=document.getElementById('lead-inp').value.trim();
+  var leadLink=document.getElementById('lead-link-inp').value.trim();
   var btn=document.getElementById('save-btn');
   btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
   results=results.filter(function(r){return r.mid!==mid;});
-  results.push({mid:mid,t1:f[1],t2:f[2],surv1:surv1,surv2:surv2,meet1:meet1,meet2:meet2,lead:lead,date:new Date().toISOString()});
+  results.push({mid:mid,t1:f[1],t2:f[2],surv1:surv1,surv2:surv2,meet1:meet1,meet2:meet2,lead:lead,leadLink:leadLink,date:new Date().toISOString()});
   saveData(function(){
     toast('Match '+mid+' saved','ok');
     document.getElementById('lead-inp').value='';
+    document.getElementById('lead-link-inp').value='';
     renderAll();
     btn.innerHTML='Save result'; btn.disabled=false;
   });
@@ -634,7 +609,7 @@ function renderLog() {
     html+='<div class="litem"><span class="lnum">'+r.mid+'</span><div class="lbody">';
     html+='<span style="color:'+(t1?t1.color:'#888');html+='font-weight:700;">'+(t1?t1.name:r.t1)+'</span> '+pts1+'pts &nbsp;vs&nbsp; ';
     html+='<span style="color:'+(t2?t2.color:'#888');html+='font-weight:700;">'+(t2?t2.name:r.t2)+'</span> '+pts2+'pts';
-    if(r.lead) html+='<br><span style="color:var(--mut);font-size:11px;">'+r.lead+'</span>';
+    if(r.lead) html+='<br><span style="color:var(--mut);font-size:11px;">'+r.lead+(r.leadLink?'  <a href="'+r.leadLink+'" target="_blank" style="color:var(--acc2);font-size:11px;">View in Salesforce ↗</a>':'')+'</span>';
     html+='</div><button class="ldel" onclick="deleteResult('+r.mid+')">✕</button></div>';
   });
   body.innerHTML=html;
@@ -647,27 +622,120 @@ function populateSchedSelects() {
   document.getElementById('st2').innerHTML=opts;
 }
 
-function addSched() {
+var editingSchedId = null;
+
+function submitSched() {
   var t1=document.getElementById('st1').value;
   var t2=document.getElementById('st2').value;
   var d=document.getElementById('sd').value;
   if(!t1||!t2||t1===t2){toast('Pick two different teams','err');return;}
   if(!d){toast('Select a date','err');return;}
-  schedules.push({id:Date.now(),t1:t1,t2:t2,date:d,time:document.getElementById('st').value,notes:document.getElementById('sn').value.trim()});
+  var entry={
+    id: editingSchedId || Date.now(),
+    t1:t1, t2:t2, date:d,
+    time:document.getElementById('st').value,
+    room:document.getElementById('sroom').value.trim(),
+    link:document.getElementById('slink').value.trim(),
+    notes:document.getElementById('sn').value.trim()
+  };
+  if (editingSchedId) {
+    schedules=schedules.map(function(s){return s.id===editingSchedId?entry:s;});
+  } else {
+    schedules.push(entry);
+  }
   schedules.sort(function(a,b){return a.date.localeCompare(b.date);});
   saveData(function(){
-    toast('Match scheduled','ok');
-    document.getElementById('sd').value='';
-    document.getElementById('st').value='';
-    document.getElementById('sn').value='';
+    toast(editingSchedId?'Match updated':'Match scheduled','ok');
+    clearSchedForm();
     renderAll();
   });
+}
+
+function clearSchedForm() {
+  editingSchedId=null;
+  document.getElementById('sd').value='';
+  document.getElementById('st').value='';
+  document.getElementById('sroom').value='';
+  document.getElementById('slink').value='';
+  document.getElementById('sn').value='';
+  document.getElementById('sched-edit-banner').style.display='none';
+  document.getElementById('sched-submit-btn').textContent='Add to schedule';
+}
+
+function cancelEditSched() { clearSchedForm(); populateSchedSelects(); }
+
+function editSched(id) {
+  var s=schedules.filter(function(x){return x.id===id;})[0];
+  if(!s) return;
+  editingSchedId=id;
+  populateSchedSelects();
+  document.getElementById('st1').value=s.t1;
+  document.getElementById('st2').value=s.t2;
+  document.getElementById('sd').value=s.date;
+  document.getElementById('st').value=s.time||'';
+  document.getElementById('sroom').value=s.room||'';
+  document.getElementById('slink').value=s.link||'';
+  document.getElementById('sn').value=s.notes||'';
+  document.getElementById('sched-edit-banner').style.display='block';
+  document.getElementById('sched-submit-btn').textContent='Save changes';
+  document.getElementById('m-sched').scrollTop=0;
 }
 
 function deleteSched(id) {
   schedules=schedules.filter(function(s){return s.id!==id;});
   saveData(function(){toast('Removed','ok');renderAll();});
 }
+
+function downloadICS(id) {
+  var s=schedules.filter(function(x){return x.id===id;})[0];
+  if(!s) return;
+  var t1=getTeam(s.t1),t2=getTeam(s.t2);
+  var t1name=t1?t1.name:s.t1;
+  var t2name=t2?t2.name:s.t2;
+  var title='EMEA DC World Cup: '+t1name+' vs '+t2name;
+  var startDate=s.date.replace(/-/g,'');
+  var dtstart, dtend;
+  if (s.time) {
+    var timeParts=s.time.split(':');
+    var h=parseInt(timeParts[0]),m=parseInt(timeParts[1]||0);
+    var hEnd=h+1; if(hEnd>23)hEnd=23;
+    dtstart=startDate+'T'+pad(h)+pad(m)+'00';
+    dtend=startDate+'T'+pad(hEnd)+pad(m)+'00';
+  } else {
+    dtstart=startDate; dtend=startDate;
+  }
+  var desc='EMEA DC FIFA World Cup 2026\\n'+t1name+' vs '+t2name;
+  if(s.room) desc+='\\nRoom: '+s.room;
+  if(s.link) desc+='\\nJoin: '+s.link;
+  if(s.notes) desc+='\\nNotes: '+s.notes;
+  desc+='\\n\\nAll sessions are public — everyone is welcome to watch.';
+  var loc=s.room||(s.link?'Online':'');
+  var ics=[
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//EMEA DC World Cup//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    'UID:wc2026-'+id+'@dcwc26.vercel.app',
+    'SUMMARY:'+title,
+    'DESCRIPTION:'+desc,
+    'LOCATION:'+loc,
+    (s.time?'DTSTART:'+dtstart:'DTSTART;VALUE=DATE:'+dtstart),
+    (s.time?'DTEND:'+dtend:'DTEND;VALUE=DATE:'+dtend),
+    'STATUS:CONFIRMED',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+  var blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url; a.download='WC2026_'+t1name.replace(/\s/g,'_')+'_vs_'+t2name.replace(/\s/g,'_')+'.ics';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function pad(n){return n<10?'0'+n:String(n);}
 
 function renderSchedList() {
   var el=document.getElementById('sched-list');
@@ -676,38 +744,81 @@ function renderSchedList() {
   schedules.forEach(function(s){
     var t1=getTeam(s.t1),t2=getTeam(s.t2);
     var ds=s.date?new Date(s.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
-    html+='<div class="litem"><span style="font-size:16px;">📅</span><div class="lbody">';
-    html+='<span style="color:'+(t1?t1.color:'#888')+';font-weight:700;">'+(t1?t1.name:s.t1)+'</span> vs <span style="color:'+(t2?t2.color:'#888')+';font-weight:700;">'+(t2?t2.name:s.t2)+'</span><br>';
-    html+='<span style="color:var(--mut);font-size:11px;">'+ds+(s.time?' · '+s.time:'')+(s.notes?' · '+s.notes:'')+'</span>';
-    html+='</div><button class="ldel" onclick="deleteSched('+s.id+')">✕</button></div>';
+    html+='<div class="litem" style="flex-direction:column;align-items:stretch;gap:8px;">';
+    html+='<div style="display:flex;align-items:center;gap:8px;">';
+    html+='<span style="font-size:15px;">📅</span>';
+    html+='<div style="flex:1;">';
+    html+='<span style="color:'+(t1?t1.color:'#888')+';font-weight:700;">'+(t1?t1.name:s.t1)+'</span>';
+    html+=' <span style="color:var(--mut);font-size:11px;">vs</span> ';
+    html+='<span style="color:'+(t2?t2.color:'#888')+';font-weight:700;">'+(t2?t2.name:s.t2)+'</span><br>';
+    html+='<span style="color:var(--mut);font-size:11px;">'+ds+(s.time?' · '+s.time:'')+'</span>';
+    if(s.room) html+='<span style="color:var(--mut);font-size:11px;"> · 📍 '+s.room+'</span>';
+    html+='</div>';
+    html+='<div style="display:flex;gap:6px;flex-shrink:0;">';
+    html+='<button onclick="downloadICS('+s.id+')" style="background:rgba(26,79,138,0.08);border:1px solid rgba(26,79,138,0.2);border-radius:5px;color:var(--acc2);font-size:11px;font-weight:700;padding:4px 8px;cursor:pointer;" title="Download .ics calendar">📥 .ics</button>';
+    html+='<button onclick="editSched('+s.id+')" style="background:none;border:1px solid var(--bdr2);border-radius:5px;color:var(--mut);font-size:11px;padding:4px 8px;cursor:pointer;">Edit</button>';
+    html+='<button class="ldel" onclick="deleteSched('+s.id+')" style="padding:4px 6px;">✕</button>';
+    html+='</div></div>';
+    if(s.link) html+='<a href="'+s.link+'" target="_blank" style="font-size:11px;color:var(--acc2);text-decoration:none;font-weight:700;">🔗 Join link ↗</a>';
+    if(s.notes) html+='<span style="font-size:11px;color:var(--mut);">'+s.notes+'</span>';
+    html+='</div>';
   });
   el.innerHTML=html;
 }
 
+var saveTeamsTimer = null;
+function debounceSaveTeams() {
+  clearTimeout(saveTeamsTimer);
+  var ind = document.getElementById('team-save-indicator');
+  if (ind) { ind.textContent='Saving...'; ind.style.color='var(--mut)'; }
+  saveTeamsTimer = setTimeout(function() {
+    TEAMS.forEach(function(t){ t.players = t.players.filter(function(p){ return p.trim(); }); });
+    saveData(function() {
+      var ind2 = document.getElementById('team-save-indicator');
+      if (ind2) { ind2.textContent='Saved ✓'; ind2.style.color='var(--grn)'; }
+      renderTeams();
+    });
+  }, 900);
+}
+
 function renderTeamEditor() {
-  var html='';
+  var html='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">';
+  html+='<span style="font-size:12px;color:var(--mut);">Changes save automatically as you type</span>';
+  html+='<span id="team-save-indicator" style="font-size:12px;color:var(--mut);"></span>';
+  html+='</div>';
+  html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;">';
   TEAMS.forEach(function(t,ti){
     html+='<div style="background:#f8f9fc;border:1px solid var(--bdr);border-radius:10px;overflow:hidden;">';
-    html+='<div style="padding:10px 14px;display:flex;align-items:center;gap:8px;background:'+t.color+'22;border-bottom:2px solid '+t.color+';">';
-    html+='<input type="color" value="'+t.color+'" oninput="TEAMS['+ti+'].color=this.value" style="width:26px;height:26px;border:none;border-radius:4px;padding:0;cursor:pointer;flex-shrink:0;">';
-    html+='<input type="text" value="'+t.name+'" oninput="TEAMS['+ti+'].name=this.value" style="flex:1;background:transparent;border:none;color:var(--nav);font-family:Arial,sans-serif;font-size:13px;font-weight:700;outline:none;">';
+    html+='<div style="padding:10px 14px;display:flex;align-items:center;gap:8px;background:'+t.color+'22;border-bottom:2px solid '+t.color+';" id="thdr-'+ti+'">';
+    html+='<input type="color" value="'+t.color+'" oninput="updateTeamColor('+ti+',this.value)" style="width:26px;height:26px;border:none;border-radius:4px;padding:0;cursor:pointer;flex-shrink:0;">';
+    html+='<input type="text" value="'+t.name+'" oninput="TEAMS['+ti+'].name=this.value;debounceSaveTeams()" style="flex:1;background:transparent;border:none;color:var(--nav);font-family:Arial,sans-serif;font-size:13px;font-weight:700;outline:none;">';
     html+='</div>';
     html+='<div style="padding:6px 14px 8px;border-bottom:1px solid var(--bdr);">';
-    html+='<input type="text" value="'+(t.captain||'')+'" oninput="TEAMS['+ti+'].captain=this.value" placeholder="Captain name" style="width:100%;background:transparent;border:none;color:var(--mut);font-family:Arial,sans-serif;font-size:11px;outline:none;">';
+    html+='<input type="text" value="'+(t.captain||'')+'" oninput="TEAMS['+ti+'].captain=this.value;debounceSaveTeams()" placeholder="Captain name" style="width:100%;background:transparent;border:none;color:var(--mut);font-family:Arial,sans-serif;font-size:11px;outline:none;">';
     html+='</div>';
     html+='<div id="plist-'+ti+'" style="padding:8px 14px 4px;">';
-    t.players.forEach(function(p,pi){html+=mkProw(ti,pi,p,t.color);});
+    t.players.forEach(function(p,pi){ html+=mkProw(ti,pi,p,t.color); });
     html+='</div>';
     html+='<button onclick="addPlayer('+ti+')" style="width:100%;background:none;border:none;border-top:1px solid var(--bdr);color:var(--acc2);font-family:Arial,sans-serif;font-size:12px;padding:7px;cursor:pointer;text-align:left;font-weight:700;">+ Add player</button>';
     html+='</div>';
   });
+  html+='</div>';
   document.getElementById('team-editor').innerHTML=html;
+}
+
+function updateTeamColor(ti, val) {
+  TEAMS[ti].color = val;
+  var hdr = document.getElementById('thdr-'+ti);
+  if (hdr) { hdr.style.background = val+'22'; hdr.style.borderBottomColor = val; }
+  var dots = document.querySelectorAll('#plist-'+ti+' span');
+  dots.forEach(function(d){ d.style.background = val; });
+  debounceSaveTeams();
 }
 
 function mkProw(ti,pi,name,color){
   return '<div id="pr-'+ti+'-'+pi+'" style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid var(--bdr);">'
     +'<span style="width:6px;height:6px;border-radius:50%;background:'+color+';flex-shrink:0;display:inline-block;"></span>'
-    +'<input type="text" value="'+name+'" oninput="TEAMS['+ti+'].players['+pi+']=this.value" style="flex:1;background:transparent;border:none;color:var(--txt);font-family:Arial,sans-serif;font-size:12px;outline:none;">'
+    +'<input type="text" value="'+name+'" oninput="TEAMS['+ti+'].players['+pi+']=this.value;debounceSaveTeams()" style="flex:1;background:transparent;border:none;color:var(--txt);font-family:Arial,sans-serif;font-size:12px;outline:none;">'
     +'<button onclick="removePlayer('+ti+','+pi+')" style="background:none;border:none;color:var(--mut);cursor:pointer;font-size:12px;">✕</button>'
     +'</div>';
 }
@@ -720,19 +831,162 @@ function addPlayer(ti){
   div.innerHTML=mkProw(ti,pi,'',TEAMS[ti].color);
   list.appendChild(div.firstElementChild);
   list.querySelector('#pr-'+ti+'-'+pi+' input').focus();
+  debounceSaveTeams();
 }
 
-function removePlayer(ti,pi){TEAMS[ti].players.splice(pi,1);renderTeamEditor();}
+function removePlayer(ti,pi){
+  TEAMS[ti].players.splice(pi,1);
+  renderTeamEditor();
+  debounceSaveTeams();
+}
 
 function saveTeams(){
   TEAMS.forEach(function(t){t.players=t.players.filter(function(p){return p.trim();});});
-  saveData(function(){toast('Teams saved','ok');renderAll();});
+  saveData(function(){toast('Teams saved','ok');renderTeams();});
 }
 
 function toast(msg,type){
   var t=document.getElementById('toast');
   t.textContent=msg; t.className='toast show'+(type?' '+type:'');
   setTimeout(function(){t.className='toast';},2800);
+}
+
+var DEFAULT_RULES = [
+  {id:'format', title:'Match format', items:[
+    {label:'Players per match', val:'2 BDRs per team — captains decide who plays'},
+    {label:'Consecutive rule', val:'A player cannot participate in two consecutive matches'},
+    {label:'Turn order', val:'Each player draws a number out of a hat. #1 goes first, #2 second, and so on.'},
+    {label:'The lead', val:'Martina pulls a random unattempted Salesforce lead. Name, company, title and trigger revealed to all players simultaneously.'},
+    {label:'The opener', val:'"Hey Sophie, my name is X from Qlik — I saw you downloaded our ebook. What was behind that?"'},
+    {label:'Match ends when', val:'Only one player is left standing — or all remaining active players have each booked a meeting.'},
+    {label:'After the match', val:'Default Salesforce lead owner follows up as normal. No pipeline disruption.'}
+  ]},
+  {id:'scoring', title:'Scoring', items:[
+    {label:'Player still standing at end', val:'1 pt for their team'},
+    {label:'Meeting booked with Martina', val:'2 pts for their team'},
+    {label:'Disqualified player', val:'0 pts'}
+  ]},
+  {id:'criteria', title:'Evaluation criteria', items:[
+    {label:'1', val:'Use of open-ended questions'},
+    {label:'2', val:'Speed and quality of follow-up questions'},
+    {label:'3', val:'Relevance of topics discussed'},
+    {label:'4', val:'Active listening and objection handling'},
+    {label:'5', val:'Ability to progress the conversation toward booking a meeting'}
+  ]},
+  {id:'disq1', title:'Disqualification — closed question', body:'Any yes/no question = instant elimination. Martina says "closed question" and stops.\nOut: "Do you use Qlik?" · "Would Tuesday work?" · "Is data a problem?"\nSafe: "What does your setup look like?" · "What\'s your calendar like next week?"'},
+  {id:'disq2', title:'Disqualification — 5-second hesitation', body:'Timekeeper counts aloud. If you haven\'t started speaking within 5 seconds, you are eliminated. No exceptions.'},
+  {id:'knockout', title:'Knockout phase', items:[
+    {label:'Qualification', val:'Top 4 teams by points after all group matches'},
+    {label:'Format', val:'SF1: 1st vs 4th · SF2: 2nd vs 3rd · Final'},
+    {label:'Players per match', val:'2 per team — 4 total in one match'},
+    {label:'Tiebreaker', val:'Most meetings booked → coin toss live in front of both teams'}
+  ]}
+];
+var customRules = null;
+
+function getRules() { return customRules || JSON.parse(JSON.stringify(DEFAULT_RULES)); }
+
+var saveRulesTimer = null;
+function debounceSaveRules() {
+  clearTimeout(saveRulesTimer);
+  var ind=document.getElementById('rules-save-ind');
+  if(ind){ind.textContent='Saving...';ind.style.color='var(--mut)';}
+  saveRulesTimer=setTimeout(function(){
+    customRules=collectRulesFromEditor();
+    saveData(function(){
+      var ind2=document.getElementById('rules-save-ind');
+      if(ind2){ind2.textContent='Saved ✓';ind2.style.color='var(--grn)';}
+      renderRulesPublic();
+    });
+  },900);
+}
+
+function collectRulesFromEditor() {
+  var rules=getRules();
+  rules.forEach(function(sec){
+    var titleEl=document.getElementById('rtitle-'+sec.id);
+    if(titleEl) sec.title=titleEl.value;
+    if(sec.items){
+      sec.items.forEach(function(item,ii){
+        var lEl=document.getElementById('rlbl-'+sec.id+'-'+ii);
+        var vEl=document.getElementById('rval-'+sec.id+'-'+ii);
+        if(lEl) item.label=lEl.value;
+        if(vEl) item.val=vEl.value;
+      });
+    }
+    if(sec.hasOwnProperty('body')){
+      var bEl=document.getElementById('rbody-'+sec.id);
+      if(bEl) sec.body=bEl.value;
+    }
+  });
+  return rules;
+}
+
+function renderRulesEditor() {
+  var rules=getRules();
+  var html='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">';
+  html+='<span style="font-size:12px;color:var(--mut);">Edits save automatically and update the public Rules tab.</span>';
+  html+='<span id="rules-save-ind" style="font-size:12px;color:var(--mut);"></span></div>';
+  rules.forEach(function(sec){
+    html+='<div style="background:#f8f9fc;border:1px solid var(--bdr);border-radius:10px;overflow:hidden;margin-bottom:12px;">';
+    html+='<div style="background:var(--nav);padding:8px 14px;display:flex;align-items:center;gap:8px;">';
+    html+='<input id="rtitle-'+sec.id+'" type="text" value="'+escHtml(sec.title)+'" oninput="debounceSaveRules()" style="flex:1;background:transparent;border:none;color:#fff;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;outline:none;">';
+    html+='</div>';
+    if(sec.items){
+      sec.items.forEach(function(item,ii){
+        html+='<div style="display:flex;gap:8px;padding:8px 14px;border-bottom:1px solid var(--bdr);">';
+        html+='<input id="rlbl-'+sec.id+'-'+ii+'" type="text" value="'+escHtml(item.label)+'" oninput="debounceSaveRules()" style="width:160px;background:#fff;border:1px solid var(--bdr2);border-radius:5px;font-family:Arial,sans-serif;font-size:12px;padding:5px 8px;color:var(--txt);outline:none;flex-shrink:0;">';
+        html+='<input id="rval-'+sec.id+'-'+ii+'" type="text" value="'+escHtml(item.val)+'" oninput="debounceSaveRules()" style="flex:1;background:#fff;border:1px solid var(--bdr2);border-radius:5px;font-family:Arial,sans-serif;font-size:12px;padding:5px 8px;color:var(--mut);outline:none;">';
+        html+='</div>';
+      });
+    }
+    if(sec.hasOwnProperty('body')){
+      html+='<div style="padding:8px 14px;">';
+      html+='<textarea id="rbody-'+sec.id+'" oninput="debounceSaveRules()" style="width:100%;min-height:80px;background:#fff;border:1px solid var(--bdr2);border-radius:5px;font-family:Arial,sans-serif;font-size:12px;padding:6px 8px;color:var(--mut);outline:none;resize:vertical;">'+escHtml(sec.body)+'</textarea>';
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  html+='<button onclick="resetRules()" style="background:none;border:none;color:var(--mut);font-size:12px;cursor:pointer;text-decoration:underline;margin-top:4px;">Reset to default rules</button>';
+  document.getElementById('rules-editor').innerHTML=html;
+}
+
+function resetRules() {
+  if(!confirm('Reset rules to default?')) return;
+  customRules=null;
+  saveData(function(){toast('Rules reset','ok');renderRulesEditor();renderRulesPublic();});
+}
+
+function escHtml(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderRulesPublic() {
+  var rules=getRules();
+  var el=document.getElementById('t-rules');
+  if(!el) return;
+  var html='<div style="max-width:620px;">';
+  html+='<p style="font-size:13px;color:var(--mut);line-height:1.8;margin-bottom:18px;">Cold call roleplay competition across all 7 EMEA DC teams. Each match uses a live unattempted Salesforce lead. <strong style="color:var(--nav);">Martina Aiello</strong> plays the prospect and acts as final decision-maker — same standard for every team.</p>';
+  rules.forEach(function(sec){
+    var isDanger = sec.id==='disq1';
+    var isWarn = sec.id==='disq2';
+    if(isDanger||isWarn){
+      html+='<div class="dbox '+(isDanger?'dred':'damb')+'">';
+      html+='<div class="dt">'+sec.title+'</div>';
+      html+='<div class="db">'+escHtml(sec.body||'').replace(/\n/g,'<br>')+'</div>';
+      html+='</div>';
+    } else {
+      html+='<div class="rblock"><div class="rblockt">'+sec.title+'</div>';
+      if(sec.items){
+        sec.items.forEach(function(item){
+          html+='<div class="rrow"><span style="font-size:13px;">'+escHtml(item.label)+'</span><span class="rm">'+escHtml(item.val)+'</span></div>';
+        });
+      }
+      html+='</div>';
+    }
+  });
+  html+='</div>';
+  el.innerHTML=html;
 }
 
 loadData();
