@@ -278,8 +278,30 @@ tbody tr:hover td{background:#f5f8ff;}
         <div id="m-results" class="msec on">
           <div class="g2">
             <div>
-              <div class="fg"><label>Match</label>
-                <select id="match-sel" onchange="loadChips()"><option value="">Select match...</option></select>
+              <div style="display:flex;gap:6px;margin-bottom:14px;">
+                <button id="mode-group-btn" onclick="setResultMode('group')" style="flex:1;padding:7px;border-radius:7px;border:1px solid var(--acc2);background:var(--acc2);color:#fff;font-family:Arial,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">Group stage</button>
+                <button id="mode-ko-btn" onclick="setResultMode('ko')" style="flex:1;padding:7px;border-radius:7px;border:1px solid var(--bdr2);background:#fff;color:var(--mut);font-family:Arial,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">Knockout</button>
+              </div>
+              <div id="group-fields">
+                <div class="fg"><label>Match</label>
+                  <select id="match-sel" onchange="loadChips()"><option value="">Select match...</option></select>
+                </div>
+              </div>
+              <div id="ko-fields" style="display:none;">
+                <div class="fg"><label>Round</label>
+                  <select id="ko-round-sel" onchange="loadKoChips()">
+                    <option value="">Select round...</option>
+                    <option value="sf1">Semi-final 1</option>
+                    <option value="sf2">Semi-final 2</option>
+                    <option value="final">Final</option>
+                  </select>
+                </div>
+                <div class="fg"><label>Team A</label>
+                  <select id="ko-t1" onchange="loadKoChips()"></select>
+                </div>
+                <div class="fg"><label>Team B</label>
+                  <select id="ko-t2" onchange="loadKoChips()"></select>
+                </div>
               </div>
               <div class="fg"><label>Lead used (name, company)</label>
                 <input type="text" id="lead-inp" placeholder="e.g. Sophie Müller, Bosch GmbH">
@@ -542,6 +564,53 @@ function showMTab(id,btn) {
   if(btn) btn.classList.add('on');
 }
 
+var resultMode = 'group';
+
+function setResultMode(mode) {
+  resultMode = mode;
+  document.getElementById('group-fields').style.display = mode==='group'?'block':'none';
+  document.getElementById('ko-fields').style.display = mode==='ko'?'block':'none';
+  document.getElementById('chip-sec').style.display = 'none';
+  document.getElementById('save-btn').disabled = true;
+  document.getElementById('mode-group-btn').style.background = mode==='group'?'var(--acc2)':'#fff';
+  document.getElementById('mode-group-btn').style.color = mode==='group'?'#fff':'var(--mut)';
+  document.getElementById('mode-group-btn').style.borderColor = mode==='group'?'var(--acc2)':'var(--bdr2)';
+  document.getElementById('mode-ko-btn').style.background = mode==='ko'?'var(--acc2)':'#fff';
+  document.getElementById('mode-ko-btn').style.color = mode==='ko'?'#fff':'var(--mut)';
+  document.getElementById('mode-ko-btn').style.borderColor = mode==='ko'?'var(--acc2)':'var(--bdr2)';
+  if (mode==='ko') populateKoSelects();
+}
+
+function populateKoSelects() {
+  var opts = TEAMS.map(function(t){return '<option value="'+t.id+'">'+t.name+'</option>';}).join('');
+  document.getElementById('ko-t1').innerHTML = '<option value="">Select team...</option>'+opts;
+  document.getElementById('ko-t2').innerHTML = '<option value="">Select team...</option>'+opts;
+}
+
+function loadKoChips() {
+  var round = document.getElementById('ko-round-sel').value;
+  var t1id = document.getElementById('ko-t1').value;
+  var t2id = document.getElementById('ko-t2').value;
+  var sec = document.getElementById('chip-sec');
+  if (!round||!t1id||!t2id||t1id===t2id) { sec.style.display='none'; document.getElementById('save-btn').disabled=true; return; }
+  var t1=getTeam(t1id), t2=getTeam(t2id);
+  var all=[];
+  (t1?t1.players:[]).forEach(function(p){all.push({p:p,team:t1});});
+  (t2?t2.players:[]).forEach(function(p){all.push({p:p,team:t2});});
+  function mkChips(cid,cls){
+    var h='';
+    all.forEach(function(item){
+      h+='<div class="chip" data-p="'+item.p+'" data-tid="'+item.team.id+'" onclick="this.classList.toggle(\''+cls+'\')">';
+      h+='<span style="width:6px;height:6px;border-radius:50%;background:'+item.team.color+';flex-shrink:0;display:inline-block"></span>'+item.p+'</div>';
+    });
+    document.getElementById(cid).innerHTML=h;
+  }
+  mkChips('surv-chips','on');
+  mkChips('meet-chips','on');
+  sec.style.display='block';
+  document.getElementById('save-btn').disabled=false;
+}
+
 function populateMatchSel() {
   var played=results.map(function(r){return r.mid;});
   var html='<option value="">Select match...</option>';
@@ -580,22 +649,37 @@ function loadChips() {
 }
 
 function saveResult() {
-  var mid=parseInt(document.getElementById('match-sel').value);
-  if(!mid) return;
-  var f=FIXTURES.filter(function(x){return x[0]===mid;})[0];
-  var sc=document.querySelectorAll('#surv-chips .chip.on');
-  var mc=document.querySelectorAll('#meet-chips .chip.on');
-  var surv1=[],surv2=[],meet1=0,meet2=0;
-  sc.forEach(function(c){if(c.dataset.tid===f[1])surv1.push(c.dataset.p);else surv2.push(c.dataset.p);});
-  mc.forEach(function(c){if(c.dataset.tid===f[1])meet1++;else meet2++;});
   var lead=document.getElementById('lead-inp').value.trim();
   var leadLink=document.getElementById('lead-link-inp').value.trim();
+  var sc=document.querySelectorAll('#surv-chips .chip.on');
+  var mc=document.querySelectorAll('#meet-chips .chip.on');
   var btn=document.getElementById('save-btn');
   btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+
+  var t1id, t2id, mid, label;
+  if (resultMode==='ko') {
+    var round=document.getElementById('ko-round-sel').value;
+    t1id=document.getElementById('ko-t1').value;
+    t2id=document.getElementById('ko-t2').value;
+    if(!round||!t1id||!t2id||t1id===t2id){toast('Fill in all knockout fields','err');btn.innerHTML='Save result';btn.disabled=false;return;}
+    var roundLabels={sf1:'Semi-final 1',sf2:'Semi-final 2','final':'Final'};
+    label=roundLabels[round]||round;
+    mid='ko-'+round;
+  } else {
+    mid=parseInt(document.getElementById('match-sel').value);
+    if(!mid){btn.innerHTML='Save result';btn.disabled=false;return;}
+    var f=FIXTURES.filter(function(x){return x[0]===mid;})[0];
+    t1id=f[1]; t2id=f[2];
+  }
+
+  var surv1=[],surv2=[],meet1=0,meet2=0;
+  sc.forEach(function(c){if(c.dataset.tid===t1id)surv1.push(c.dataset.p);else surv2.push(c.dataset.p);});
+  mc.forEach(function(c){if(c.dataset.tid===t1id)meet1++;else meet2++;});
+
   results=results.filter(function(r){return r.mid!==mid;});
-  results.push({mid:mid,t1:f[1],t2:f[2],surv1:surv1,surv2:surv2,meet1:meet1,meet2:meet2,lead:lead,leadLink:leadLink,date:new Date().toISOString()});
+  results.push({mid:mid,t1:t1id,t2:t2id,surv1:surv1,surv2:surv2,meet1:meet1,meet2:meet2,lead:lead,leadLink:leadLink,label:label||null,date:new Date().toISOString()});
   saveData(function(){
-    toast('Match '+mid+' saved','ok');
+    toast((label||'Match '+mid)+' saved','ok');
     document.getElementById('lead-inp').value='';
     document.getElementById('lead-link-inp').value='';
     renderAll();
@@ -604,8 +688,8 @@ function saveResult() {
 }
 
 function deleteResult(mid) {
-  if(!confirm('Delete result for match '+mid+'?')) return;
-  results=results.filter(function(r){return r.mid!==mid;});
+  if(!confirm('Delete this result?')) return;
+  results=results.filter(function(r){return String(r.mid)!==String(mid);});
   saveData(function(){toast('Deleted','ok');renderAll();});
 }
 
@@ -617,18 +701,28 @@ function resetAll() {
 
 function renderLog() {
   var body=document.getElementById('log-body');
-  document.getElementById('log-count').textContent='('+results.length+'/21)';
+  var total=results.filter(function(r){return typeof r.mid==='number';}).length;
+  document.getElementById('log-count').textContent='('+total+'/21 group'+( results.length-total>0?' + '+(results.length-total)+' KO':'')+')';
   if(!results.length){body.innerHTML='<div class="empty">No results yet.</div>';return;}
   var html='';
-  results.slice().sort(function(a,b){return b.mid-a.mid;}).forEach(function(r){
+  results.slice().sort(function(a,b){
+    var an=typeof a.mid==='number'?a.mid:999;
+    var bn=typeof b.mid==='number'?b.mid:999;
+    return bn-an;
+  }).forEach(function(r){
     var t1=getTeam(r.t1),t2=getTeam(r.t2);
     var pts1=(r.surv1||[]).length+(r.meet1||0)*2;
     var pts2=(r.surv2||[]).length+(r.meet2||0)*2;
-    html+='<div class="litem"><span class="lnum">'+r.mid+'</span><div class="lbody">';
-    html+='<span style="color:'+(t1?t1.color:'#888');html+='font-weight:700;">'+(t1?t1.name:r.t1)+'</span> '+pts1+'pts &nbsp;vs&nbsp; ';
-    html+='<span style="color:'+(t2?t2.color:'#888');html+='font-weight:700;">'+(t2?t2.name:r.t2)+'</span> '+pts2+'pts';
+    var label=r.label||(typeof r.mid==='number'?'Match '+r.mid:r.mid);
+    var isKo=typeof r.mid!=='number';
+    html+='<div class="litem">';
+    html+='<span class="lnum" style="'+(isKo?'color:var(--acc);':'')+'">'+label+'</span>';
+    html+='<div class="lbody">';
+    html+='<span style="color:'+(t1?t1.color:'#888')+';font-weight:700;">'+(t1?t1.name:r.t1)+'</span> '+pts1+'pts &nbsp;vs&nbsp; ';
+    html+='<span style="color:'+(t2?t2.color:'#888')+';font-weight:700;">'+(t2?t2.name:r.t2)+'</span> '+pts2+'pts';
     if(r.lead) html+='<br><span style="color:var(--mut);font-size:11px;">'+r.lead+(r.leadLink?'  <a href="'+r.leadLink+'" target="_blank" style="color:var(--acc2);font-size:11px;">View in Salesforce ↗</a>':'')+'</span>';
-    html+='</div><button class="ldel" onclick="deleteResult('+r.mid+')">✕</button></div>';
+    html+='</div>';
+    html+='<button class="ldel" onclick="deleteResult(\''+r.mid+'\')">✕</button></div>';
   });
   body.innerHTML=html;
 }
