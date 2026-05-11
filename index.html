@@ -220,25 +220,7 @@ tbody tr:hover td{background:#f5f8ff;}
   </div>
 
   <div id="t-ko" class="sec">
-    <p style="font-size:12px;color:var(--mut);margin-bottom:24px;line-height:1.7;max-width:580px;">Top 4 teams from the group stage advance. 2 players per team per knockout match. Players draw numbers to set turn order. Match ends when one player remains or all remaining players have booked a meeting.</p>
-    <div class="ko-wrap">
-      <div class="ko-semis">
-        <div>
-          <div class="kct">Semi-final 1 · 1st vs 4th</div>
-          <div class="km"><div class="kt">TBD — 1st place</div><div class="kt">TBD — 4th place</div></div>
-        </div>
-        <div style="margin-top:8px;">
-          <div class="kct">Semi-final 2 · 2nd vs 3rd</div>
-          <div class="km"><div class="kt">TBD — 2nd place</div><div class="kt">TBD — 3rd place</div></div>
-        </div>
-      </div>
-      <div class="ko-div"><div class="ko-conn"></div><div class="ko-line"></div><div class="ko-conn"></div></div>
-      <div class="ko-final">
-        <div class="kct" style="text-align:center;">🏆 Final</div>
-        <div class="km final"><div class="kt">TBD — SF1 winner</div><div class="kt">TBD — SF2 winner</div></div>
-        <p style="font-size:11px;color:var(--mut);margin-top:10px;text-align:center;">Teams confirmed after group stage</p>
-      </div>
-    </div>
+    <div id="ko-content"><div class="loading"><div class="spin"></div>Loading bracket...</div></div>
   </div>
 
   <div id="t-teams" class="sec">
@@ -528,7 +510,7 @@ function renderTeams() {
 }
 
 function renderAll() {
-  renderStandings(); renderFixtures(); renderTeams(); renderRulesPublic(); renderStats();
+  renderStandings(); renderFixtures(); renderTeams(); renderRulesPublic(); renderStats(); renderKnockout();
   if (isAdmin) {
     populateMatchSel(); renderLog(); renderSchedList(); populateSchedSelects();
     var teamsTab = document.getElementById('m-teams');
@@ -1283,6 +1265,156 @@ function renderStats() {
   html+='</div></div></div>';
 
   el.innerHTML=html;
+}
+
+function renderKnockout() {
+  var el = document.getElementById('ko-content');
+  if (!el) return;
+
+  var standings = calcStandings();
+  var groupDone = results.filter(function(r){ return typeof r.mid === 'number'; }).length;
+  var qualified = standings.slice(0,4);
+
+  // Get KO results
+  var sf1r = results.filter(function(r){ return r.mid==='ko-sf1'; })[0];
+  var sf2r = results.filter(function(r){ return r.mid==='ko-sf2'; })[0];
+  var finr = results.filter(function(r){ return r.mid==='ko-final'; })[0];
+
+  function getWinner(r, t1id, t2id) {
+    if (!r) return null;
+    var pts1=(r.surv1||[]).length+(r.meet1||0)*2;
+    var pts2=(r.surv2||[]).length+(r.meet2||0)*2;
+    if (pts1>pts2) return t1id;
+    if (pts2>pts1) return t2id;
+    return null; // draw — shouldn't happen
+  }
+
+  var sf1t1 = qualified[0]||null, sf1t2 = qualified[3]||null;
+  var sf2t1 = qualified[1]||null, sf2t2 = qualified[2]||null;
+  var sf1winner = sf1r ? getWinner(sf1r, sf1r.t1, sf1r.t2) : null;
+  var sf2winner = sf2r ? getWinner(sf2r, sf2r.t1, sf2r.t2) : null;
+  var finT1 = sf1winner ? getTeam(sf1winner) : null;
+  var finT2 = sf2winner ? getTeam(sf2winner) : null;
+  var champion = finr ? getTeam(getWinner(finr, finr.t1, finr.t2)) : null;
+
+  function matchCard(label, teamA, teamB, matchResult, clickId) {
+    var pts1 = matchResult ? (matchResult.surv1||[]).length+(matchResult.meet1||0)*2 : null;
+    var pts2 = matchResult ? (matchResult.surv2||[]).length+(matchResult.meet2||0)*2 : null;
+    var winId = matchResult ? getWinner(matchResult, matchResult.t1, matchResult.t2) : null;
+    var played = !!matchResult;
+    var clickable = played ? 'cursor:pointer;' : '';
+    var onclick = played ? 'onclick="showKoResult(\''+clickId+'\')"' : '';
+
+    function teamRow(team, pts, side) {
+      var isWinner = played && winId && team && team.id===winId;
+      var tbd = !team;
+      return '<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--bdr);'
+        +(isWinner?'background:rgba(26,79,138,0.05);':'')+'">'
+        +'<span style="width:9px;height:9px;border-radius:50%;background:'+(team?team.color:'#ccc')+';flex-shrink:0;display:inline-block;"></span>'
+        +'<span style="flex:1;font-size:13px;font-weight:'+(isWinner?'700':'400')+';color:'+(tbd?'var(--mut)':'var(--nav)');font-style:'+(tbd?'italic':'normal')+';">'
+        +(team?team.name:(side==='A'?'TBD':'TBD'))+'</span>'
+        +(played?'<span style="font-size:14px;font-weight:700;color:'+(isWinner?'var(--acc2)':'var(--mut)')+';">'+pts+'</span>':'')
+        +(isWinner?'<span style="font-size:10px;font-weight:700;color:var(--acc2);margin-left:4px;">W</span>':'')
+        +'</div>';
+    }
+
+    return '<div style="margin-bottom:4px;">'
+      +'<div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:6px;">'+label+'</div>'
+      +'<div class="km" style="'+(played?'border-color:rgba(26,79,138,0.2);':'')+clickable+'" '+onclick+'>'
+      +teamRow(teamA, pts1, 'A')
+      +'<div style="border-bottom:none;">'
+      +teamRow(teamB, pts2, 'B').replace('border-bottom:1px solid var(--bdr);','')
+      +'</div>'
+      +(played?'<div style="padding:4px 14px;font-size:10px;color:var(--mut);background:var(--sur3);">Click to see details</div>':'')
+      +'</div></div>';
+  }
+
+  var html = '';
+
+  if (champion) {
+    html += '<div style="background:linear-gradient(135deg,#0a1628 0%,#1a3a5c 100%);border-radius:12px;padding:20px;text-align:center;margin-bottom:24px;border:2px solid var(--acc);">';
+    html += '<div style="font-size:22px;margin-bottom:6px;">🏆</div>';
+    html += '<div style="font-size:11px;color:var(--acc);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">World Cup Champion</div>';
+    html += '<div style="font-size:20px;font-weight:700;color:#fff;letter-spacing:1px;">'+champion.name+'</div>';
+    html += '</div>';
+  }
+
+  html += '<p style="font-size:12px;color:var(--mut);margin-bottom:20px;line-height:1.7;max-width:580px;">Top 4 teams from the group stage advance. 2 players per team. Players draw numbers to set turn order. Match ends when one player remains or all remaining players have booked a meeting.</p>';
+
+  html += '<div class="ko-wrap">';
+
+  // Semis
+  html += '<div class="ko-semis">';
+  html += matchCard('Semi-final 1 · 1st vs 4th', sf1t1, sf1t2, sf1r, 'ko-sf1');
+  html += '<div style="margin-top:12px;">';
+  html += matchCard('Semi-final 2 · 2nd vs 3rd', sf2t1, sf2t2, sf2r, 'ko-sf2');
+  html += '</div></div>';
+
+  // Connector
+  html += '<div class="ko-div"><div class="ko-conn"></div><div class="ko-line"></div><div class="ko-conn"></div></div>';
+
+  // Final
+  html += '<div class="ko-final">';
+  html += matchCard('🏆 Final', finT1, finT2, finr, 'ko-final');
+  if (!finr) html += '<p style="font-size:11px;color:var(--mut);margin-top:8px;text-align:center;">Confirmed after semi-finals</p>';
+  html += '</div>';
+
+  html += '</div>';
+
+  if (groupDone < 21) {
+    html += '<p style="font-size:11px;color:var(--mut);margin-top:16px;">'+groupDone+'/21 group matches played — top 4 will be confirmed when the group stage is complete.</p>';
+  }
+
+  el.innerHTML = html;
+}
+
+function showKoResult(mid) {
+  var r = results.filter(function(x){ return x.mid===mid; })[0];
+  if (!r) return;
+  var labels = {'ko-sf1':'Semi-final 1','ko-sf2':'Semi-final 2','ko-final':'Final'};
+  var t1=getTeam(r.t1), t2=getTeam(r.t2);
+  var pts1=(r.surv1||[]).length+(r.meet1||0)*2;
+  var pts2=(r.surv2||[]).length+(r.meet2||0)*2;
+  var winId = pts1>pts2?r.t1:(pts2>pts1?r.t2:null);
+  document.getElementById('mm-title').textContent=(labels[mid]||mid)+' — Result';
+  var html='';
+  html+='<div style="display:flex;align-items:center;justify-content:space-around;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--bdr);">';
+  [t1,t2].forEach(function(t,i){
+    var pts=i===0?pts1:pts2;
+    var isW=winId&&t&&t.id===winId;
+    html+='<div style="text-align:center;">';
+    html+='<div style="width:12px;height:12px;border-radius:50%;background:'+(t?t.color:'#888')+';margin:0 auto 6px;"></div>';
+    html+='<div style="font-size:13px;font-weight:700;color:var(--nav);">'+(t?t.name:(i===0?r.t1:r.t2))+'</div>';
+    html+='<div style="font-size:32px;font-weight:700;color:'+(isW?'var(--acc2)':'var(--mut)')+';margin-top:4px;">'+pts+'</div>';
+    html+='<div style="font-size:10px;color:var(--mut);margin-top:2px;">pts'+(isW?' · Winner':'')+'</div>';
+    html+='</div>';
+    if(i===0) html+='<div style="font-size:18px;color:var(--mut);font-weight:700;">vs</div>';
+  });
+  html+='</div>';
+  function plist(team,surv,meet){
+    var h='<div style="margin-bottom:14px;">';
+    h+='<div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:8px;">'+(team?team.name:'')+'</div>';
+    if(!surv||!surv.length){h+='<div style="font-size:12px;color:var(--mut);">No survivors</div>';}
+    else surv.forEach(function(p){
+      h+='<div style="display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid var(--bdr);font-size:12px;">';
+      h+='<span style="width:6px;height:6px;border-radius:50%;background:'+(team?team.color:'#888')+';display:inline-block;flex-shrink:0;"></span>';
+      h+=p+'<span style="color:var(--grn);font-size:11px;font-weight:700;margin-left:auto;">+1 pt</span></div>';
+    });
+    if(meet>0) h+='<div style="margin-top:6px;font-size:11px;color:var(--acc2);font-weight:700;">📅 '+meet+' meeting'+(meet>1?'s':'')+' booked — +'+(meet*2)+' pts</div>';
+    h+='</div>'; return h;
+  }
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
+  html+=plist(t1,r.surv1,r.meet1||0);
+  html+=plist(t2,r.surv2,r.meet2||0);
+  html+='</div>';
+  if(r.lead){
+    html+='<div style="margin-top:14px;padding:10px 14px;background:var(--sur3);border-radius:8px;font-size:12px;color:var(--mut);">';
+    html+='Lead: <strong style="color:var(--nav);">'+r.lead+'</strong>';
+    if(r.leadLink) html+=' &nbsp;<a href="'+r.leadLink+'" target="_blank" style="color:var(--acc2);font-size:11px;font-weight:700;">View in Salesforce ↗</a>';
+    html+='</div>';
+  }
+  document.getElementById('mm-body').innerHTML=html;
+  document.getElementById('match-modal-bg').classList.add('open');
 }
 
 loadData();
