@@ -59,7 +59,9 @@ tbody tr:hover td{background:#f5f8ff;}
 .sched-hdr{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--acc2);padding:14px 0 8px;display:flex;align-items:center;gap:6px;}
 .fix{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fff;border:1px solid var(--bdr);border-radius:8px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,0.03);}
 .fix:hover{border-color:var(--bdr2);}
-.fix.done{opacity:.45;}
+#match-modal-bg.open{display:flex!important;}
+.fix.done{opacity:.55;cursor:pointer;}
+.fix.done:hover{opacity:1;border-color:var(--acc2)!important;}
 .fix.sched{border-color:rgba(26,79,138,0.25);border-left:3px solid var(--acc2);}
 .fnum{font-size:10px;color:var(--mut);font-weight:700;min-width:24px;}
 .fbody{flex:1;display:flex;align-items:center;gap:10px;font-size:13px;flex-wrap:wrap;}
@@ -174,6 +176,7 @@ tbody tr:hover td{background:#f5f8ff;}
 <nav class="nav">
   <button class="nb on" onclick="showTab('t-stand',this)">Standings</button>
   <button class="nb" onclick="showTab('t-fix',this)">Fixtures</button>
+  <button class="nb" onclick="showTab('t-stats',this)">Statistics</button>
   <button class="nb" onclick="showTab('t-ko',this)">Knockout</button>
   <button class="nb" onclick="showTab('t-teams',this)">Teams</button>
   <button class="nb" onclick="showTab('t-rules',this)">Rules</button>
@@ -199,6 +202,21 @@ tbody tr:hover td{background:#f5f8ff;}
 
   <div id="t-fix" class="sec">
     <div id="fix-list"><div class="loading"><div class="spin"></div>Loading fixtures...</div></div>
+  </div>
+
+  <div id="t-stats" class="sec">
+    <div id="stats-content"><div class="loading"><div class="spin"></div>Loading statistics...</div></div>
+  </div>
+
+  <!-- Match result modal -->
+  <div id="match-modal-bg" style="display:none;position:fixed;inset:0;background:rgba(10,22,40,.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fff;border-radius:14px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,0.25);overflow:hidden;">
+      <div style="background:linear-gradient(135deg,#0a1628 0%,#1a3a5c 100%);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--acc);">
+        <span style="font-size:14px;font-weight:700;color:#fff;" id="mm-title">Match result</span>
+        <button onclick="closeMatchModal()" style="background:none;border:none;color:rgba(255,255,255,.6);font-size:20px;cursor:pointer;line-height:1;">✕</button>
+      </div>
+      <div id="mm-body" style="padding:20px;"></div>
+    </div>
   </div>
 
   <div id="t-ko" class="sec">
@@ -329,17 +347,17 @@ var TEAMS = [
   {id:'mea', name:'MEA & ISV', color:'#1D5FA8', captain:'Amine Kajtih',
    players:['Amine Kajtih','Antonio Marletta','Robin Belvedere','Dana Eichmann','Marc Ferrer','Gwendal Dussart','Katarina Rusnakova','Ruba Ammar','Ghiwa Saleh']},
   {id:'uk', name:'UK', color:'#c0392b', captain:'John Gomes Luis',
-   players:['John Gomes Luis','Emma Godley','Caolan Dignam','Samuel Spence','Elena Cruickshank Godoy']},
+   players:['John Gomes Luis','Emma Godley','Caolan Dignam','Samuel Spence','Elena Cruickshank Godoy','Margot Bontemps']},
   {id:'nor', name:'Nordics & Benelux', color:'#1a7a4a', captain:'Ronan Byrne',
-   players:['Ronan Byrne','Emily Mulcahy','Margot Bontemps','Niek Bredewold','Noud Obbens','Pierre Bruneel','Cecilia Holm','Sophie Gonzalves','Lumi Salmeia']},
+   players:['Noud Obbens','Pierre Bruneel','Cecilia Holm','Sophie Gonzalves','Lumi Salmeia']},
   {id:'cen', name:'Central EE & Italy', color:'#7B3FA0', captain:'Juran Keen',
    players:['Juran Keen','Denis Margaretic','Claudia Alizieri','Flavia Branchi','Natalia Koronczewska','Henry Racamier']},
   {id:'dach', name:'DACH', color:'#2e86ab', captain:'Lara Weber',
-   players:['Lara Weber','Midja Ibich','Mauro Marini','Thore Böhm','Lucia Cheves Dauber','Marcel Brechlin','Wadim Gopfauf','Karlotta Kühn']},
+   players:['Midja Ibich','Mauro Marini','Thore Böhm','Lucia Cheves Dauber','Marcel Brechlin','Wadim Gopfauf','Karlotta Kühn']},
   {id:'sth', name:'South', color:'#b8520a', captain:'Baptiste Durand',
-   players:['Baptiste Durand','Maya Karassane','Eitan Arakanchi','Benjamin Anceau','Amine El Gour','Leonard Morignot','Valery Antunes','Maximo Castro','Alec Brosolo']},
+   players:['Maya Karassane','Eitan Arakanchi','Benjamin Anceau','Amine El Gour','Leonard Morignot','Valery Antunes','Maximo Castro','Alec Brosolo']},
   {id:'aca', name:'Academy', color:'#5a5a5a', captain:'Horacio Sosa',
-   players:['Horacio Sosa','Shany Lefrancois','Rébecca-Océane Traub','Rabih Darwiche','Sofia Berro','Bengi Turk']}
+   players:['Shany Lefrancois','Rébecca-Océane Traub','Rabih Darwiche','Sofia Berro','Bengi Turk']}
 ];
 
 var FIXTURES = [
@@ -464,7 +482,7 @@ function renderFixtures() {
       var done=playedIds.indexOf(num)!==-1;
       var sc=schedMap[f[1]+'-'+f[2]];
       var ds=sc&&!done?new Date(sc.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'';
-      html+='<div class="fix '+(done?'done':'')+'">';
+      html+='<div class="fix '+(done?'done':'')+'"'+(done?' onclick="showMatchResult('+num+')" title="Click to see result"':'')+'>'; 
       html+='<span class="fnum">'+num+'</span><div class="fbody">';
       html+='<div class="fteam"><span class="tdot" style="width:7px;height:7px;background:'+(t1?t1.color:'#888')+'"></span>'+(t1?t1.name:f[1])+'</div>';
       html+='<span class="fvs">VS</span>';
@@ -488,7 +506,7 @@ function renderTeams() {
 }
 
 function renderAll() {
-  renderStandings(); renderFixtures(); renderTeams(); renderRulesPublic();
+  renderStandings(); renderFixtures(); renderTeams(); renderRulesPublic(); renderStats();
   if (isAdmin) {
     populateMatchSel(); renderLog(); renderSchedList(); populateSchedSelects();
     var teamsTab = document.getElementById('m-teams');
@@ -986,6 +1004,190 @@ function renderRulesPublic() {
     }
   });
   html+='</div>';
+  el.innerHTML=html;
+}
+
+function showMatchResult(num) {
+  var r=results.filter(function(x){return x.mid===num;})[0];
+  if(!r) return;
+  var f=FIXTURES.filter(function(x){return x[0]===num;})[0];
+  var t1=getTeam(f[1]),t2=getTeam(f[2]);
+  var pts1=(r.surv1||[]).length+(r.meet1||0)*2;
+  var pts2=(r.surv2||[]).length+(r.meet2||0)*2;
+  document.getElementById('mm-title').textContent='Match '+num+' — Result';
+  var html='';
+  html+='<div style="display:flex;align-items:center;justify-content:space-around;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--bdr);">';
+  html+='<div style="text-align:center;">';
+  html+='<div style="width:12px;height:12px;border-radius:50%;background:'+(t1?t1.color:'#888')+';margin:0 auto 6px;"></div>';
+  html+='<div style="font-size:13px;font-weight:700;color:var(--nav);">'+(t1?t1.name:f[1])+'</div>';
+  html+='<div style="font-size:32px;font-weight:700;color:var(--acc2);margin-top:4px;">'+pts1+'</div>';
+  html+='<div style="font-size:10px;color:var(--mut);margin-top:2px;">pts</div>';
+  html+='</div>';
+  html+='<div style="font-size:18px;color:var(--mut);font-weight:700;">vs</div>';
+  html+='<div style="text-align:center;">';
+  html+='<div style="width:12px;height:12px;border-radius:50%;background:'+(t2?t2.color:'#888')+';margin:0 auto 6px;"></div>';
+  html+='<div style="font-size:13px;font-weight:700;color:var(--nav);">'+(t2?t2.name:f[2])+'</div>';
+  html+='<div style="font-size:32px;font-weight:700;color:var(--acc2);margin-top:4px;">'+pts2+'</div>';
+  html+='<div style="font-size:10px;color:var(--mut);margin-top:2px;">pts</div>';
+  html+='</div></div>';
+  function playerList(team, survArr, meetCount) {
+    var h='<div style="margin-bottom:14px;">';
+    h+='<div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:8px;">'+team.name+'</div>';
+    if(!survArr||!survArr.length){
+      h+='<div style="font-size:12px;color:var(--mut);">No survivors</div>';
+    } else {
+      survArr.forEach(function(p){
+        h+='<div style="display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid var(--bdr);font-size:12px;">';
+        h+='<span style="width:6px;height:6px;border-radius:50%;background:'+team.color+';display:inline-block;flex-shrink:0;"></span>';
+        h+=p+' <span style="color:var(--grn);font-size:11px;font-weight:700;margin-left:auto;">+1 pt</span></div>';
+      });
+    }
+    if(meetCount>0){
+      h+='<div style="margin-top:6px;font-size:11px;color:var(--acc2);font-weight:700;">📅 '+meetCount+' meeting'+(meetCount>1?'s':'')+' booked — +'+(meetCount*2)+' pts</div>';
+    }
+    h+='</div>';
+    return h;
+  }
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
+  html+=playerList(t1||({}), r.surv1, r.meet1||0);
+  html+=playerList(t2||({}), r.surv2, r.meet2||0);
+  html+='</div>';
+  if(r.lead){
+    html+='<div style="margin-top:14px;padding:10px 14px;background:var(--sur3);border-radius:8px;font-size:12px;color:var(--mut);">';
+    html+='Lead: <strong style="color:var(--nav);">'+r.lead+'</strong>';
+    if(r.leadLink) html+=' &nbsp;<a href="'+r.leadLink+'" target="_blank" style="color:var(--acc2);font-size:11px;font-weight:700;">View in Salesforce ↗</a>';
+    html+='</div>';
+  }
+  document.getElementById('mm-body').innerHTML=html;
+  document.getElementById('match-modal-bg').classList.add('open');
+}
+
+function closeMatchModal(){
+  document.getElementById('match-modal-bg').classList.remove('open');
+}
+document.addEventListener('click',function(e){
+  var bg=document.getElementById('match-modal-bg');
+  if(e.target===bg) closeMatchModal();
+});
+
+function renderStats() {
+  var el=document.getElementById('stats-content');
+  if(!el) return;
+  if(!results.length){el.innerHTML='<div class="empty" style="padding:30px 0;">No results yet — stats will appear once matches have been played.</div>';return;}
+
+  var playerStats={};
+  results.forEach(function(r){
+    var f=FIXTURES.filter(function(x){return x[0]===r.mid;})[0];
+    if(!f) return;
+    var process=function(survArr,meetCount,teamId){
+      var t=getTeam(teamId);
+      (survArr||[]).forEach(function(p){
+        if(!playerStats[p]) playerStats[p]={name:p,team:t,survived:0,meetings:0,played:0,pts:0};
+        playerStats[p].survived++;
+        playerStats[p].played++;
+        playerStats[p].pts++;
+      });
+      if(meetCount>0){
+        (survArr||[]).forEach(function(p,i){
+          if(i<meetCount){
+            if(!playerStats[p]) playerStats[p]={name:p,team:t,survived:0,meetings:0,played:0,pts:0};
+            playerStats[p].meetings++;
+            playerStats[p].pts++;
+          }
+        });
+      }
+    };
+    process(r.surv1,r.meet1||0,f[1]);
+    process(r.surv2,r.meet2||0,f[2]);
+  });
+
+  var allPlayers=Object.values(playerStats).sort(function(a,b){return b.pts-a.pts||b.meetings-a.meetings;});
+  var topScorers=allPlayers.slice(0,5);
+  var topMeetings=allPlayers.slice().sort(function(a,b){return b.meetings-a.meetings;}).slice(0,5);
+  var topSurvivor=allPlayers.slice().sort(function(a,b){return b.survived-a.survived;})[0];
+  var topBooker=allPlayers.slice().sort(function(a,b){return b.meetings-a.meetings;})[0];
+
+  var standings=calcStandings();
+  var topTeam=standings[0];
+  var mostMeetingsTeam=standings.slice().sort(function(a,b){return b.meetings-a.meetings;})[0];
+
+  function statCard(emoji,label,value,sub,color){
+    return '<div style="background:#fff;border:1px solid var(--bdr);border-radius:10px;padding:16px;border-top:3px solid '+(color||'var(--acc)')+';box-shadow:0 1px 4px rgba(0,0,0,0.04);">'
+      +'<div style="font-size:20px;margin-bottom:6px;">'+emoji+'</div>'
+      +'<div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;">'+label+'</div>'
+      +'<div style="font-size:16px;font-weight:700;color:var(--nav);">'+value+'</div>'
+      +(sub?'<div style="font-size:11px;color:var(--mut);margin-top:2px;">'+sub+'</div>':'')
+      +'</div>';
+  }
+
+  function playerRow(rank,p){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;background:'+(rank===1?'rgba(201,168,76,0.06)':'#fff')+';border-bottom:1px solid var(--bdr);">'
+      +'<span style="font-size:12px;color:var(--mut);font-weight:700;min-width:20px;">'+rank+'</span>'
+      +'<span style="width:8px;height:8px;border-radius:50%;background:'+(p.team?p.team.color:'#888')+';flex-shrink:0;display:inline-block;"></span>'
+      +'<span style="flex:1;font-size:13px;font-weight:'+(rank===1?'700':'400')+';color:var(--nav);">'+p.name+'</span>'
+      +'<span style="font-size:11px;color:var(--mut);">'+(p.team?p.team.name:'')+'</span>'
+      +'<span style="font-size:13px;font-weight:700;color:var(--acc2);min-width:30px;text-align:right;">'+p.pts+'pts</span>'
+      +'</div>';
+  }
+
+  function playerRowMeet(rank,p){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;background:'+(rank===1?'rgba(26,79,138,0.04)':'#fff')+';border-bottom:1px solid var(--bdr);">'
+      +'<span style="font-size:12px;color:var(--mut);font-weight:700;min-width:20px;">'+rank+'</span>'
+      +'<span style="width:8px;height:8px;border-radius:50%;background:'+(p.team?p.team.color:'#888')+';flex-shrink:0;display:inline-block;"></span>'
+      +'<span style="flex:1;font-size:13px;font-weight:'+(rank===1?'700':'400')+';color:var(--nav);">'+p.name+'</span>'
+      +'<span style="font-size:11px;color:var(--mut);">'+(p.team?p.team.name:'')+'</span>'
+      +'<span style="font-size:13px;font-weight:700;color:var(--grn);min-width:30px;text-align:right;">'+p.meetings+'</span>'
+      +'</div>';
+  }
+
+  var html='';
+
+  html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:24px;">';
+  html+=statCard('🏆','Leading team',topTeam?topTeam.name:'—',topTeam?topTeam.pts+' pts':'','var(--acc)');
+  html+=statCard('⚽','Top scorer',topScorers[0]?topScorers[0].name:'—',topScorers[0]?topScorers[0].pts+' pts':'','var(--acc2)');
+  html+=statCard('📅','Most meetings',topBooker?topBooker.name:'—',topBooker?topBooker.meetings+' booked':'','var(--grn)');
+  html+=statCard('🔥','Most meetings (team)',mostMeetingsTeam?mostMeetingsTeam.name:'—',mostMeetingsTeam?mostMeetingsTeam.meetings+' booked':'','var(--dan)');
+  html+='</div>';
+
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
+
+  html+='<div><div style="font-size:13px;font-weight:700;color:var(--nav);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--acc);">Top scorers</div>';
+  html+='<div style="background:#fff;border:1px solid var(--bdr);border-radius:10px;overflow:hidden;">';
+  if(topScorers.length){
+    topScorers.forEach(function(p,i){html+=playerRow(i+1,p);});
+  } else { html+='<div style="padding:14px;font-size:13px;color:var(--mut);">No data yet</div>'; }
+  html+='</div></div>';
+
+  html+='<div><div style="font-size:13px;font-weight:700;color:var(--nav);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--grn);">Most meetings booked</div>';
+  html+='<div style="background:#fff;border:1px solid var(--bdr);border-radius:10px;overflow:hidden;">';
+  if(topMeetings.filter(function(p){return p.meetings>0;}).length){
+    topMeetings.filter(function(p){return p.meetings>0;}).forEach(function(p,i){html+=playerRowMeet(i+1,p);});
+  } else { html+='<div style="padding:14px;font-size:13px;color:var(--mut);">No meetings booked yet</div>'; }
+  html+='</div></div>';
+
+  html+='</div>';
+
+  html+='<div style="margin-top:20px;"><div style="font-size:13px;font-weight:700;color:var(--nav);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--acc2);">Team performance</div>';
+  html+='<div style="background:#fff;border:1px solid var(--bdr);border-radius:10px;overflow:hidden;">';
+  html+='<div style="display:grid;grid-template-columns:auto 1fr repeat(4,60px);gap:0;">';
+  html+='<div style="padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--nav);border-bottom:1px solid var(--bdr);">#</div>';
+  html+='<div style="padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--nav);border-bottom:1px solid var(--bdr);">Team</div>';
+  html+='<div style="padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--nav);border-bottom:1px solid var(--bdr);text-align:center;">P</div>';
+  html+='<div style="padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--nav);border-bottom:1px solid var(--bdr);text-align:center;">Surv</div>';
+  html+='<div style="padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--nav);border-bottom:1px solid var(--bdr);text-align:center;">Mtgs</div>';
+  html+='<div style="padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--nav);border-bottom:1px solid var(--bdr);text-align:center;">Pts</div>';
+  standings.forEach(function(t,i){
+    var bg=i%2===0?'#fff':'var(--sur3)';
+    var rate=t.played>0?Math.round((t.survived/(t.played*4))*100)+'%':'—';
+    html+='<div style="padding:9px 14px;font-size:12px;font-weight:700;color:var(--mut);background:'+bg+';border-bottom:1px solid var(--bdr);">'+(i+1)+'</div>';
+    html+='<div style="padding:9px 14px;font-size:13px;background:'+bg+';border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:7px;"><span style="width:8px;height:8px;border-radius:50%;background:'+t.color+';display:inline-block;flex-shrink:0;"></span>'+t.name+'</div>';
+    html+='<div style="padding:9px 14px;font-size:12px;color:var(--mut);background:'+bg+';border-bottom:1px solid var(--bdr);text-align:center;">'+t.played+'</div>';
+    html+='<div style="padding:9px 14px;font-size:12px;color:var(--mut);background:'+bg+';border-bottom:1px solid var(--bdr);text-align:center;">'+t.survived+'</div>';
+    html+='<div style="padding:9px 14px;font-size:12px;color:var(--mut);background:'+bg+';border-bottom:1px solid var(--bdr);text-align:center;">'+t.meetings+'</div>';
+    html+='<div style="padding:9px 14px;font-size:13px;font-weight:700;color:var(--acc2);background:'+bg+';border-bottom:1px solid var(--bdr);text-align:center;">'+t.pts+'</div>';
+  });
+  html+='</div></div></div>';
+
   el.innerHTML=html;
 }
 
