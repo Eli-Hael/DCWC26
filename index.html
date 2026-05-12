@@ -180,6 +180,7 @@ tbody tr:hover td{background:#f5f8ff;}
   <button class="nb" onclick="showTab('t-ko',this)">Knockout</button>
   <button class="nb" onclick="showTab('t-teams',this)">Teams</button>
   <button class="nb" onclick="showTab('t-rules',this)">Rules</button>
+  <button class="nb" onclick="showTab('t-coaching',this)">📞 Coaching</button>
 </nav>
 
 <div class="pg">
@@ -229,6 +230,140 @@ tbody tr:hover td{background:#f5f8ff;}
 
   <div id="t-rules" class="sec">
     <div class="loading"><div class="spin"></div>Loading rules...</div>
+  </div>
+
+  <div id="t-coaching" class="sec">
+    <div style="max-width:720px;">
+      <div style="background:linear-gradient(135deg,#0a1628 0%,#1a3a5c 100%);border-radius:12px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:3px solid var(--acc);">
+        <div>
+          <div style="font-size:11px;color:var(--acc);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">Full call playbook</div>
+          <div style="font-size:15px;font-weight:700;color:#fff;">EMEA BDR Call Playbook — English</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:2px;">Inbound & Outbound · For internal use only</div>
+        </div>
+        <a href="https://qliktechnologies365.sharepoint.com/:w:/s/EMEADemandCenter956/IQBjUp_gtmF7S5sv9r7HslpiAWRv5wLIGhnJHfb1T82MEy8?e=FrqoHQ" target="_blank" style="background:var(--acc);color:#0a1628;font-size:13px;font-weight:700;padding:10px 20px;border-radius:8px;text-decoration:none;white-space:nowrap;">Open full script ↗</a>
+      </div>
+
+      <!-- CALL FLOW -->
+      <div class="rblock" style="margin-bottom:16px;">
+        <div class="rblockt">The 6-step call flow</div>
+        <div style="padding:14px 16px;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;">
+            <div style="background:var(--sur3);border-radius:8px;padding:12px;border-left:3px solid var(--acc2);">
+              <div style="font-size:18px;margin-bottom:4px;">01</div>
+              <div style="font-size:12px;font-weight:700;color:var(--nav);margin-bottom:3px;">The Opener</div>
+              <div style="font-size:11px;color:var(--mut);line-height:1.5;">Greet by name. First question must always be open. Mirror their exact words back.</div>
+            </div>
+            <div style="background:var(--sur3);border-radius:8px;padding:12px;border-left:3px solid var(--acc2);">
+              <div style="font-size:18px;margin-bottom:4px;">02</div>
+              <div style="font-size:12px;font-weight:700;color:var(--nav);margin-bottom:3px;">Understand Their Situation</div>
+              <div style="font-size:11px;color:var(--mut);line-height:1.5;">Build a picture of what they have today. Keep asking open questions. Let them talk.</div>
+            </div>
+            <div style="background:var(--sur3);border-radius:8px;padding:12px;border-left:3px solid var(--acc);">
+              <div style="font-size:18px;margin-bottom:4px;">03</div>
+              <div style="font-size:12px;font-weight:700;color:var(--nav);margin-bottom:3px;">Find the Gap (1-10)</div>
+              <div style="font-size:11px;color:var(--mut);line-height:1.5;">"Rate what you have today 1-10." "How come it's not a 10?" The gap is everything.</div>
+            </div>
+            <div style="background:var(--sur3);border-radius:8px;padding:12px;border-left:3px solid var(--acc);">
+              <div style="font-size:18px;margin-bottom:4px;">04</div>
+              <div style="font-size:12px;font-weight:700;color:var(--nav);margin-bottom:3px;">Amplify the Need</div>
+              <div style="font-size:11px;color:var(--mut);line-height:1.5;">"What are you missing out on?" "What does that cost the business?" Build urgency.</div>
+            </div>
+            <div style="background:var(--sur3);border-radius:8px;padding:12px;border-left:3px solid var(--grn);">
+              <div style="font-size:18px;margin-bottom:4px;">05</div>
+              <div style="font-size:12px;font-weight:700;color:var(--nav);margin-bottom:3px;">Close for the Meeting</div>
+              <div style="font-size:11px;color:var(--mut);line-height:1.5;">Feed back what you heard. Suggest specific days. You're the expert — guide them.</div>
+            </div>
+            <div style="background:var(--sur3);border-radius:8px;padding:12px;border-left:3px solid var(--grn);">
+              <div style="font-size:18px;margin-bottom:4px;">06</div>
+              <div style="font-size:12px;font-weight:700;color:var(--nav);margin-bottom:3px;">2 Questions Before Hanging Up</div>
+              <div style="font-size:11px;color:var(--mut);line-height:1.5;">Q1: "Who else should I invite?" Q2: "What else should we cover?" Every. Single. Time.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1-10 TECHNIQUE -->
+      <div class="rblock" style="margin-bottom:16px;">
+        <div class="rblockt">The 1-10 technique</div>
+        <div class="rrow"><span style="font-size:13px;">"On a scale of 1 to 10 — where 1 is completely useless and 10 is perfect — how would you rate what you have in place today?"</span></div>
+        <div class="rrow"><span style="font-size:13px;">"How come it's not a 10? What would it need to look like?"</span></div>
+        <div class="rrow"><span style="font-size:13px;">"What are you missing out on by not having that?"</span></div>
+        <div class="rrow" style="background:rgba(26,79,138,0.03);"><span style="font-size:12px;color:var(--mut);">💡 If they say 8 or 9 — "What would a 10 look like?" The number doesn't matter. The gap does. Once they describe the gap and its cost, they've half-sold themselves.</span></div>
+      </div>
+
+      <!-- OBJECTION HANDLING -->
+      <div class="rblock" style="margin-bottom:16px;">
+        <div class="rblockt">Objection handling quick reference</div>
+        <div class="rrow" style="flex-direction:column;align-items:flex-start;gap:4px;">
+          <span style="font-size:11px;font-weight:700;color:var(--dan);">"I'm in a meeting / bad time"</span>
+          <span style="font-size:12px;color:var(--mut);">"No problem — when's a better time? I'll lock it in now so I'm not catching you off guard again."</span>
+        </div>
+        <div class="rrow" style="flex-direction:column;align-items:flex-start;gap:4px;">
+          <span style="font-size:11px;font-weight:700;color:var(--dan);">"I'm not interested"</span>
+          <span style="font-size:12px;color:var(--mut);">"Honestly, you might be right — can I ask you one thing to find out?"</span>
+        </div>
+        <div class="rrow" style="flex-direction:column;align-items:flex-start;gap:4px;">
+          <span style="font-size:11px;font-weight:700;color:var(--dan);">"We already have a solution"</span>
+          <span style="font-size:12px;color:var(--mut);">"Of course — on a scale of 1 to 10, how confident are you that what you have today will support where the business needs to be in the next 12–18 months?"</span>
+        </div>
+        <div class="rrow" style="flex-direction:column;align-items:flex-start;gap:4px;">
+          <span style="font-size:11px;font-weight:700;color:var(--dan);">"Just send me an email"</span>
+          <span style="font-size:12px;color:var(--mut);">"Happy to — so I can make it worth opening, what's the one thing most relevant to you right now?"</span>
+        </div>
+        <div class="rrow" style="flex-direction:column;align-items:flex-start;gap:4px;border-bottom:none;">
+          <span style="font-size:11px;font-weight:700;color:var(--dan);">"We're happy with what we have"</span>
+          <span style="font-size:12px;color:var(--mut);">"Great to hear. Most people say the same — and when we dig in there's usually one or two things that could be sharper. What would a 10 actually look like for you?"</span>
+        </div>
+      </div>
+
+      <!-- COLD CALL OPENERS -->
+      <div class="rblock" style="margin-bottom:16px;">
+        <div class="rblockt">5 cold call opener styles</div>
+        <div style="padding:0 16px;">
+          <div style="padding:12px 0;border-bottom:1px solid var(--bdr);">
+            <div style="font-size:11px;font-weight:700;color:var(--acc2);margin-bottom:3px;">STYLE 1 — Direct & Confident</div>
+            <div style="font-size:11px;color:var(--mut);margin-bottom:5px;">Best for: Senior buyers, ops personas, people who hate small talk</div>
+            <div style="font-size:12px;color:var(--nav);font-style:italic;line-height:1.6;">"Hi [Name], it's [You] from Qlik. I'll be straight — we've been working with [industry] companies struggling with [pain], and helped them [outcome]. Is that on your radar?"</div>
+          </div>
+          <div style="padding:12px 0;border-bottom:1px solid var(--bdr);">
+            <div style="font-size:11px;font-weight:700;color:var(--acc2);margin-bottom:3px;">STYLE 2 — Curiosity / Pattern Interrupt</div>
+            <div style="font-size:11px;color:var(--mut);margin-bottom:5px;">Best for: Data personas, anyone who gets a lot of cold calls</div>
+            <div style="font-size:12px;color:var(--nav);font-style:italic;line-height:1.6;">"Hi [Name], bit of an unusual call — I'm not sure if what we do is even relevant to you. Can I take 60 seconds to explain, and you tell me if it's worth a conversation?"</div>
+          </div>
+          <div style="padding:12px 0;border-bottom:1px solid var(--bdr);">
+            <div style="font-size:11px;font-weight:700;color:var(--acc2);margin-bottom:3px;">STYLE 3 — Insight-Led</div>
+            <div style="font-size:11px;color:var(--mut);margin-bottom:5px;">Best for: When you have a trigger — growth signal, hiring data, news</div>
+            <div style="font-size:12px;color:var(--nav);font-style:italic;line-height:1.6;">"Hi [Name], I was looking at [company] and noticed you've been [expanding/hiring for X]. That usually means [data challenge] becomes a real problem fast. Is that something you're feeling yet?"</div>
+          </div>
+          <div style="padding:12px 0;border-bottom:1px solid var(--bdr);">
+            <div style="font-size:11px;font-weight:700;color:var(--acc2);margin-bottom:3px;">STYLE 4 — Referral / Warm Intro</div>
+            <div style="font-size:11px;color:var(--mut);margin-bottom:5px;">Best for: When you have a name to drop or content touchpoint</div>
+            <div style="font-size:12px;color:var(--nav);font-style:italic;line-height:1.6;">"Hi [Name], I think you downloaded / attended [content] recently. I wanted to follow up personally rather than send an automated email — did you get a chance to look at it?"</div>
+          </div>
+          <div style="padding:12px 0;">
+            <div style="font-size:11px;font-weight:700;color:var(--acc2);margin-bottom:3px;">STYLE 5 — Low Pressure / Disarming</div>
+            <div style="font-size:11px;color:var(--mut);margin-bottom:5px;">Best for: Hard-to-reach prospects, very senior contacts</div>
+            <div style="font-size:12px;color:var(--nav);font-style:italic;line-height:1.6;">"Hi [Name], I promise this isn't going to be a painful sales call. I've got one question — depending on your answer I'll either say it's not worth your time, or ask for ten minutes. Sound fair?"</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GATEKEEPER -->
+      <div class="rblock" style="margin-bottom:16px;">
+        <div class="rblockt">Gatekeeper golden rules</div>
+        <div class="rrow"><span style="font-size:12px;color:var(--mut);">Short and confident beats long and apologetic every time</span></div>
+        <div class="rrow"><span style="font-size:12px;color:var(--mut);">Never pitch the gatekeeper — one sentence max on what it's about</span></div>
+        <div class="rrow"><span style="font-size:12px;color:var(--mut);">Always leave with something: a name, a time, a direct number</span></div>
+        <div class="rrow"><span style="font-size:12px;color:var(--mut);">A blocked call is not a failed call — it's an intel-gathering exercise</span></div>
+        <div class="rrow" style="border-bottom:none;"><span style="font-size:12px;color:var(--mut);">Use the gatekeeper's name if you can find it — it changes everything</span></div>
+      </div>
+
+      <!-- MINDSET -->
+      <div style="background:linear-gradient(135deg,rgba(26,79,138,0.06) 0%,rgba(201,168,76,0.06) 100%);border:1px solid var(--bdr);border-left:4px solid var(--acc);border-radius:10px;padding:16px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--acc2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">Remember</div>
+        <div style="font-size:13px;color:var(--nav);line-height:1.8;font-style:italic;">"We are not here to sell. We are here to solve problems. Once someone feels that, they will almost always agree to speak to a specialist. They should feel lucky to get a meeting with us — because we don't just meet with anyone."</div>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -290,6 +425,9 @@ tbody tr:hover td{background:#f5f8ff;}
               </div>
               <div class="fg"><label>Lead link (Salesforce URL)</label>
                 <input type="text" id="lead-link-inp" placeholder="https://qlik.lightning.force.com/...">
+              </div>
+              <div class="fg"><label>Recording link (Teams / Zoom / SharePoint)</label>
+                <input type="text" id="recording-inp" placeholder="https://...">
               </div>
               <div id="chip-sec" style="display:none;">
                 <span class="sublbl">Players still standing — tap to mark (1 pt each)</span>
@@ -484,14 +622,59 @@ function renderFixtures() {
       var f=FIXTURES.filter(function(x){return x[0]===num;})[0];
       var t1=getTeam(f[1]),t2=getTeam(f[2]);
       var done=playedIds.indexOf(num)!==-1;
+      var r=done?results.filter(function(x){return x.mid===num;})[0]:null;
       var sc=schedMap[f[1]+'-'+f[2]];
       var ds=sc&&!done?new Date(sc.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'';
-      html+='<div class="fix '+(done?'done':'')+'"'+(done?' onclick="showMatchResult('+num+')" title="Click to see result"':'')+'>'; 
-      html+='<span class="fnum">'+num+'</span><div class="fbody">';
-      html+='<div class="fteam"><span class="tdot" style="width:7px;height:7px;background:'+(t1?t1.color:'#888')+'"></span>'+(t1?t1.name:f[1])+'</div>';
-      html+='<span class="fvs">VS</span>';
-      html+='<div class="fteam r">'+(t2?t2.name:f[2])+'<span class="tdot" style="width:7px;height:7px;background:'+(t2?t2.color:'#888')+';margin-left:7px"></span></div>';
-      html+='</div>'+(done?'<span class="fdone">✓ Done</span>':ds?'<span class="fmeta">'+ds+'</span>':'')+'</div>';
+
+      if (done && r) {
+        var pts1=(r.surv1||[]).length+(r.meet1||0)*2;
+        var pts2=(r.surv2||[]).length+(r.meet2||0)*2;
+        var winId=pts1>pts2?r.t1:(pts2>pts1?r.t2:null);
+        html+='<div style="background:#fff;border:1px solid var(--bdr);border-radius:8px;margin-bottom:6px;overflow:hidden;cursor:pointer;" onclick="showMatchResult('+num+')">';
+        // Top row: teams + score
+        html+='<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;">';
+        html+='<span style="font-size:10px;color:var(--mut);font-weight:700;min-width:24px;">'+num+'</span>';
+        html+='<div style="flex:1;display:flex;align-items:center;gap:8px;">';
+        // Team 1
+        html+='<div style="display:flex;align-items:center;gap:6px;flex:1;'+(winId===r.t1?'font-weight:700;':'opacity:.65;')+'">';
+        html+='<span style="width:7px;height:7px;border-radius:50%;background:'+(t1?t1.color:'#888')+';flex-shrink:0;display:inline-block;"></span>';
+        html+='<span style="font-size:13px;color:var(--nav);">'+(t1?t1.name:f[1])+'</span>';
+        if(winId===r.t1) html+='<span style="font-size:10px;font-weight:700;color:var(--acc2);background:rgba(26,79,138,0.08);padding:1px 6px;border-radius:3px;margin-left:2px;">W</span>';
+        html+='</div>';
+        // Score
+        html+='<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">';
+        html+='<span style="font-size:15px;font-weight:700;color:'+(winId===r.t1?'var(--acc2)':'var(--mut)')+';">'+pts1+'</span>';
+        html+='<span style="font-size:11px;color:var(--mut);">—</span>';
+        html+='<span style="font-size:15px;font-weight:700;color:'+(winId===r.t2?'var(--acc2)':'var(--mut)')+';">'+pts2+'</span>';
+        html+='</div>';
+        // Team 2
+        html+='<div style="display:flex;align-items:center;gap:6px;flex:1;justify-content:flex-end;'+(winId===r.t2?'font-weight:700;':'opacity:.65;')+'">';
+        if(winId===r.t2) html+='<span style="font-size:10px;font-weight:700;color:var(--acc2);background:rgba(26,79,138,0.08);padding:1px 6px;border-radius:3px;margin-right:2px;">W</span>';
+        html+='<span style="font-size:13px;color:var(--nav);">'+(t2?t2.name:f[2])+'</span>';
+        html+='<span style="width:7px;height:7px;border-radius:50%;background:'+(t2?t2.color:'#888')+';flex-shrink:0;display:inline-block;"></span>';
+        html+='</div>';
+        html+='</div></div>';
+        // Bottom row: survivors, meetings, recording
+        var details=[];
+        var allSurv=[].concat(r.surv1||[]).concat(r.surv2||[]);
+        if(allSurv.length) details.push('🏃 '+allSurv.join(', '));
+        var meeters=[];
+        if(r.meet1>0&&r.surv1&&r.surv1.length) r.surv1.slice(0,r.meet1).forEach(function(p){meeters.push(p);});
+        if(r.meet2>0&&r.surv2&&r.surv2.length) r.surv2.slice(0,r.meet2).forEach(function(p){meeters.push(p);});
+        if(meeters.length) details.push('📅 '+meeters.join(', '));
+        var bottomHtml='<div style="padding:5px 14px 8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;border-top:1px solid var(--bdr);background:var(--sur3);">';
+        bottomHtml+='<span style="font-size:11px;color:var(--mut);">'+details.join(' &nbsp;·&nbsp; ')+'</span>';
+        if(r.recording) bottomHtml+='<a href="'+r.recording+'" target="_blank" onclick="event.stopPropagation()" style="font-size:11px;font-weight:700;color:var(--acc2);text-decoration:none;background:rgba(26,79,138,0.08);padding:3px 10px;border-radius:4px;flex-shrink:0;">▶ Watch recording</a>';
+        bottomHtml+='</div>';
+        html+=bottomHtml+'</div>';
+      } else {
+        html+='<div class="fix">';
+        html+='<span class="fnum">'+num+'</span><div class="fbody">';
+        html+='<div class="fteam"><span class="tdot" style="width:7px;height:7px;background:'+(t1?t1.color:'#888')+'"></span>'+(t1?t1.name:f[1])+'</div>';
+        html+='<span class="fvs">VS</span>';
+        html+='<div class="fteam r">'+(t2?t2.name:f[2])+'<span class="tdot" style="width:7px;height:7px;background:'+(t2?t2.color:'#888')+';margin-left:7px"></span></div>';
+        html+='</div>'+(ds?'<span class="fmeta">'+ds+'</span>':'')+'</div>';
+      }
     });
   });
   document.getElementById('fix-list').innerHTML=html;
@@ -633,6 +816,7 @@ function loadChips() {
 function saveResult() {
   var lead=document.getElementById('lead-inp').value.trim();
   var leadLink=document.getElementById('lead-link-inp').value.trim();
+  var recording=document.getElementById('recording-inp').value.trim();
   var sc=document.querySelectorAll('#surv-chips .chip.on');
   var mc=document.querySelectorAll('#meet-chips .chip.on');
   var btn=document.getElementById('save-btn');
@@ -659,11 +843,12 @@ function saveResult() {
   mc.forEach(function(c){if(c.dataset.tid===t1id)meet1++;else meet2++;});
 
   results=results.filter(function(r){return r.mid!==mid;});
-  results.push({mid:mid,t1:t1id,t2:t2id,surv1:surv1,surv2:surv2,meet1:meet1,meet2:meet2,lead:lead,leadLink:leadLink,label:label||null,date:new Date().toISOString()});
+  results.push({mid:mid,t1:t1id,t2:t2id,surv1:surv1,surv2:surv2,meet1:meet1,meet2:meet2,lead:lead,leadLink:leadLink,recording:recording,label:label||null,date:new Date().toISOString()});
   saveData(function(){
     toast((label||'Match '+mid)+' saved','ok');
     document.getElementById('lead-inp').value='';
     document.getElementById('lead-link-inp').value='';
+    document.getElementById('recording-inp').value='';
     renderAll();
     btn.innerHTML='Save result'; btn.disabled=false;
   });
@@ -986,7 +1171,6 @@ function debounceSaveRules() {
   var ind=document.getElementById('rules-save-ind');
   if(ind){ind.textContent='Saving...';ind.style.color='var(--mut)';}
   saveRulesTimer=setTimeout(function(){
-    customRules=collectRulesFromEditor();
     saveData(function(){
       var ind2=document.getElementById('rules-save-ind');
       if(ind2){ind2.textContent='Saved ✓';ind2.style.color='var(--grn)';}
@@ -1019,30 +1203,111 @@ function collectRulesFromEditor() {
 function renderRulesEditor() {
   var rules=getRules();
   var html='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">';
-  html+='<span style="font-size:12px;color:var(--mut);">Edits save automatically and update the public Rules tab.</span>';
+  html+='<span style="font-size:12px;color:var(--mut);">Add, edit, delete or reorder sections and rows. Saves automatically.</span>';
   html+='<span id="rules-save-ind" style="font-size:12px;color:var(--mut);"></span></div>';
-  rules.forEach(function(sec){
-    html+='<div style="background:#f8f9fc;border:1px solid var(--bdr);border-radius:10px;overflow:hidden;margin-bottom:12px;">';
+  rules.forEach(function(sec, si){
+    html+='<div style="background:#f8f9fc;border:1px solid var(--bdr);border-radius:10px;overflow:hidden;margin-bottom:12px;" id="rsec-'+si+'">';
+    // Section header
     html+='<div style="background:var(--nav);padding:8px 14px;display:flex;align-items:center;gap:8px;">';
-    html+='<input id="rtitle-'+sec.id+'" type="text" value="'+escHtml(sec.title)+'" oninput="debounceSaveRules()" style="flex:1;background:transparent;border:none;color:#fff;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;outline:none;">';
+    html+='<input id="rtitle-'+si+'" type="text" value="'+escHtml(sec.title)+'" oninput="updateRuleTitle('+si+',this.value)" style="flex:1;background:transparent;border:none;color:#fff;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;outline:none;">';
+    html+='<button onclick="moveSection('+si+',-1)" title="Move up" style="background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:14px;padding:0 4px;">↑</button>';
+    html+='<button onclick="moveSection('+si+',1)" title="Move down" style="background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:14px;padding:0 4px;">↓</button>';
+    html+='<button onclick="deleteSection('+si+')" title="Delete section" style="background:none;border:none;color:rgba(255,100,100,.7);cursor:pointer;font-size:14px;padding:0 4px;">✕</button>';
     html+='</div>';
     if(sec.items){
       sec.items.forEach(function(item,ii){
-        html+='<div style="display:flex;gap:8px;padding:8px 14px;border-bottom:1px solid var(--bdr);">';
-        html+='<input id="rlbl-'+sec.id+'-'+ii+'" type="text" value="'+escHtml(item.label)+'" oninput="debounceSaveRules()" style="width:160px;background:#fff;border:1px solid var(--bdr2);border-radius:5px;font-family:Arial,sans-serif;font-size:12px;padding:5px 8px;color:var(--txt);outline:none;flex-shrink:0;">';
-        html+='<input id="rval-'+sec.id+'-'+ii+'" type="text" value="'+escHtml(item.val)+'" oninput="debounceSaveRules()" style="flex:1;background:#fff;border:1px solid var(--bdr2);border-radius:5px;font-family:Arial,sans-serif;font-size:12px;padding:5px 8px;color:var(--mut);outline:none;">';
+        html+='<div style="display:flex;gap:6px;padding:7px 14px;border-bottom:1px solid var(--bdr);align-items:center;">';
+        html+='<input id="rlbl-'+si+'-'+ii+'" type="text" value="'+escHtml(item.label)+'" oninput="updateRuleItem('+si+','+ii+',\'label\',this.value)" placeholder="Label" style="width:150px;background:#fff;border:1px solid var(--bdr2);border-radius:5px;font-family:Arial,sans-serif;font-size:12px;padding:5px 8px;color:var(--txt);outline:none;flex-shrink:0;">';
+        html+='<input id="rval-'+si+'-'+ii+'" type="text" value="'+escHtml(item.val)+'" oninput="updateRuleItem('+si+','+ii+',\'val\',this.value)" placeholder="Value" style="flex:1;background:#fff;border:1px solid var(--bdr2);border-radius:5px;font-family:Arial,sans-serif;font-size:12px;padding:5px 8px;color:var(--mut);outline:none;">';
+        html+='<button onclick="moveRow('+si+','+ii+',-1)" title="Move up" style="background:none;border:none;color:var(--mut);cursor:pointer;font-size:13px;padding:0 3px;">↑</button>';
+        html+='<button onclick="moveRow('+si+','+ii+',1)" title="Move down" style="background:none;border:none;color:var(--mut);cursor:pointer;font-size:13px;padding:0 3px;">↓</button>';
+        html+='<button onclick="deleteRow('+si+','+ii+')" style="background:none;border:none;color:var(--dan);cursor:pointer;font-size:13px;padding:0 3px;">✕</button>';
         html+='</div>';
       });
+      html+='<button onclick="addRow('+si+')" style="width:100%;background:none;border:none;border-top:1px solid var(--bdr);color:var(--acc2);font-family:Arial,sans-serif;font-size:12px;padding:7px;cursor:pointer;text-align:left;font-weight:700;">+ Add row</button>';
     }
     if(sec.hasOwnProperty('body')){
       html+='<div style="padding:8px 14px;">';
-      html+='<textarea id="rbody-'+sec.id+'" oninput="debounceSaveRules()" style="width:100%;min-height:80px;background:#fff;border:1px solid var(--bdr2);border-radius:5px;font-family:Arial,sans-serif;font-size:12px;padding:6px 8px;color:var(--mut);outline:none;resize:vertical;">'+escHtml(sec.body)+'</textarea>';
+      html+='<textarea id="rbody-'+si+'" oninput="updateRuleBody('+si+',this.value)" style="width:100%;min-height:80px;background:#fff;border:1px solid var(--bdr2);border-radius:5px;font-family:Arial,sans-serif;font-size:12px;padding:6px 8px;color:var(--mut);outline:none;resize:vertical;">'+escHtml(sec.body)+'</textarea>';
       html+='</div>';
     }
     html+='</div>';
   });
-  html+='<button onclick="resetRules()" style="background:none;border:none;color:var(--mut);font-size:12px;cursor:pointer;text-decoration:underline;margin-top:4px;">Reset to default rules</button>';
+  html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">';
+  html+='<button onclick="addSection(\'items\')" style="background:rgba(26,79,138,0.08);border:1px solid rgba(26,79,138,0.2);border-radius:6px;color:var(--acc2);font-family:Arial,sans-serif;font-size:12px;font-weight:700;padding:7px 14px;cursor:pointer;">+ Add section (rows)</button>';
+  html+='<button onclick="addSection(\'body\')" style="background:rgba(26,79,138,0.08);border:1px solid rgba(26,79,138,0.2);border-radius:6px;color:var(--acc2);font-family:Arial,sans-serif;font-size:12px;font-weight:700;padding:7px 14px;cursor:pointer;">+ Add section (text block)</button>';
+  html+='<button onclick="resetRules()" style="background:none;border:1px solid var(--bdr);border-radius:6px;color:var(--mut);font-family:Arial,sans-serif;font-size:12px;padding:7px 14px;cursor:pointer;margin-left:auto;">Reset to defaults</button>';
+  html+='</div>';
   document.getElementById('rules-editor').innerHTML=html;
+}
+
+function getRulesFromEditor() {
+  var rules=getRules();
+  rules.forEach(function(sec,si){
+    var tEl=document.getElementById('rtitle-'+si);
+    if(tEl) sec.title=tEl.value;
+    if(sec.items){
+      sec.items.forEach(function(item,ii){
+        var lEl=document.getElementById('rlbl-'+si+'-'+ii);
+        var vEl=document.getElementById('rval-'+si+'-'+ii);
+        if(lEl) item.label=lEl.value;
+        if(vEl) item.val=vEl.value;
+      });
+    }
+    if(sec.hasOwnProperty('body')){
+      var bEl=document.getElementById('rbody-'+si);
+      if(bEl) sec.body=bEl.value;
+    }
+  });
+  return rules;
+}
+
+function updateRuleTitle(si,val){ var r=getRules(); r[si].title=val; customRules=r; debounceSaveRules(); }
+function updateRuleItem(si,ii,key,val){ var r=getRules(); r[si].items[ii][key]=val; customRules=r; debounceSaveRules(); }
+function updateRuleBody(si,val){ var r=getRules(); r[si].body=val; customRules=r; debounceSaveRules(); }
+
+function addRow(si){
+  var r=getRulesFromEditor(); customRules=r;
+  r[si].items.push({label:'',val:''});
+  customRules=r; saveData(function(){ renderRulesEditor(); renderRulesPublic(); });
+}
+
+function deleteRow(si,ii){
+  var r=getRulesFromEditor(); customRules=r;
+  r[si].items.splice(ii,1);
+  customRules=r; saveData(function(){ renderRulesEditor(); renderRulesPublic(); });
+}
+
+function moveRow(si,ii,dir){
+  var r=getRulesFromEditor(); customRules=r;
+  var items=r[si].items;
+  var ni=ii+dir;
+  if(ni<0||ni>=items.length) return;
+  var tmp=items[ii]; items[ii]=items[ni]; items[ni]=tmp;
+  customRules=r; saveData(function(){ renderRulesEditor(); renderRulesPublic(); });
+}
+
+function addSection(type){
+  var r=getRulesFromEditor(); customRules=r;
+  var id='sec'+Date.now();
+  if(type==='items') r.push({id:id,title:'New section',items:[{label:'',val:''}]});
+  else r.push({id:id,title:'New section',body:''});
+  customRules=r; saveData(function(){ renderRulesEditor(); renderRulesPublic(); });
+}
+
+function deleteSection(si){
+  if(!confirm('Delete this section?')) return;
+  var r=getRulesFromEditor(); customRules=r;
+  r.splice(si,1);
+  customRules=r; saveData(function(){ renderRulesEditor(); renderRulesPublic(); });
+}
+
+function moveSection(si,dir){
+  var r=getRulesFromEditor(); customRules=r;
+  var ni=si+dir;
+  if(ni<0||ni>=r.length) return;
+  var tmp=r[si]; r[si]=r[ni]; r[ni]=tmp;
+  customRules=r; saveData(function(){ renderRulesEditor(); renderRulesPublic(); });
 }
 
 function resetRules() {
@@ -1133,6 +1398,12 @@ function showMatchResult(num) {
     html+='Lead: <strong style="color:var(--nav);">'+r.lead+'</strong>';
     if(r.leadLink) html+=' &nbsp;<a href="'+r.leadLink+'" target="_blank" style="color:var(--acc2);font-size:11px;font-weight:700;">View in Salesforce ↗</a>';
     html+='</div>';
+  }
+  if(r.recording){
+    html+='<div style="margin-top:10px;">';
+    html+='<a href="'+r.recording+'" target="_blank" style="display:flex;align-items:center;gap:8px;background:rgba(26,79,138,0.06);border:1px solid rgba(26,79,138,0.15);border-radius:8px;padding:10px 14px;text-decoration:none;">';
+    html+='<span style="font-size:18px;">▶</span><span style="font-size:13px;font-weight:700;color:var(--acc2);">Watch recording</span>';
+    html+='<span style="font-size:11px;color:var(--mut);margin-left:auto;">Opens in new tab ↗</span></a></div>';
   }
   document.getElementById('mm-body').innerHTML=html;
   document.getElementById('match-modal-bg').classList.add('open');
