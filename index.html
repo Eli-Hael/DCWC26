@@ -1210,6 +1210,12 @@ function renderRulesEditor() {
   var html='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">';
   html+='<span style="font-size:12px;color:var(--mut);">Add, edit, delete or reorder sections and rows. Saves automatically.</span>';
   html+='<span id="rules-save-ind" style="font-size:12px;color:var(--mut);"></span></div>';
+  var intro = customRules && customRules._intro ? customRules._intro : 'Cold call roleplay competition across all 8 EMEA DC teams. Each match uses a live unattempted Salesforce lead. Martina Aiello plays the prospect and acts as final decision-maker — same standard for every team.';
+  html+='<div style="background:#f8f9fc;border:1px solid var(--bdr);border-radius:10px;overflow:hidden;margin-bottom:12px;">';
+  html+='<div style="background:var(--nav);padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;">Intro text</div>';
+  html+='<div style="padding:10px 14px;">';
+  html+='<textarea oninput="updateRulesIntro(this.value)" style="width:100%;min-height:70px;background:#fff;border:1px solid var(--bdr2);border-radius:5px;font-family:Arial,sans-serif;font-size:12px;padding:6px 8px;color:var(--mut);outline:none;resize:vertical;">'+escHtml(intro)+'</textarea>';
+  html+='</div></div>';
   rules.forEach(function(sec, si){
     html+='<div style="background:#f8f9fc;border:1px solid var(--bdr);border-radius:10px;overflow:hidden;margin-bottom:12px;" id="rsec-'+si+'">';
     // Section header
@@ -1270,6 +1276,11 @@ function getRulesFromEditor() {
 function updateRuleTitle(si,val){ var r=getRules(); r[si].title=val; customRules=r; debounceSaveRules(); }
 function updateRuleItem(si,ii,key,val){ var r=getRules(); r[si].items[ii][key]=val; customRules=r; debounceSaveRules(); }
 function updateRuleBody(si,val){ var r=getRules(); r[si].body=val; customRules=r; debounceSaveRules(); }
+function updateRulesIntro(val){
+  if(!customRules) customRules=JSON.parse(JSON.stringify(DEFAULT_RULES));
+  customRules._intro=val;
+  debounceSaveRules();
+}
 
 function addRow(si){
   var r=getRulesFromEditor(); customRules=r;
@@ -1329,8 +1340,9 @@ function renderRulesPublic() {
   var rules=getRules();
   var el=document.getElementById('t-rules');
   if(!el) return;
+  var intro = customRules && customRules._intro ? customRules._intro : 'Cold call roleplay competition across all 8 EMEA DC teams. Each match uses a live unattempted Salesforce lead. Martina Aiello plays the prospect and acts as final decision-maker — same standard for every team.';
   var html='<div style="max-width:620px;">';
-  html+='<p style="font-size:13px;color:var(--mut);line-height:1.8;margin-bottom:18px;">Cold call roleplay competition across all 7 EMEA DC teams. Each match uses a live unattempted Salesforce lead. <strong style="color:var(--nav);">Martina Aiello</strong> plays the prospect and acts as final decision-maker — same standard for every team.</p>';
+  html+='<p style="font-size:13px;color:var(--mut);line-height:1.8;margin-bottom:18px;">'+escHtml(intro).replace('Martina Aiello','<strong style="color:var(--nav);">Martina Aiello</strong>')+'</p>';
   rules.forEach(function(sec){
     var isDanger = sec.id==='disq1';
     var isWarn = sec.id==='disq2';
