@@ -481,7 +481,6 @@ tbody tr:hover td{background:#f5f8ff;}
 <div class="toast" id="toast"></div>
 
 <script>
-var API_KEY = '$2a$10$1YEH86EbgtXteUKCtgiyde2jr2PB0udClbVP9.vvU1AlGVW/J048.';
 var ADMIN_PW = 'emea2026';
 var ROUNDS = [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20],[21,22,23,24],[25,26,27,28]];
 
@@ -514,7 +513,6 @@ var FIXTURES = [
   [25,'mea','isv'],[26,'uk','aca'],[27,'nor','sth'],[28,'cen','dach']
 ];
 
-var binId = '6a01f6d1adc21f119a84eca6';
 var results = [];
 var schedules = [];
 var isAdmin = false;
@@ -524,37 +522,17 @@ function getTeam(id) {
   return null;
 }
 
-function apiFetch(url, opts, cb) {
-  var xhr = new XMLHttpRequest();
-  xhr.open(opts.method||'GET', url);
-  xhr.setRequestHeader('X-Access-Key', API_KEY);
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  if (opts.binName) xhr.setRequestHeader('X-Bin-Name', opts.binName);
-  xhr.onload = function() {
-    if (xhr.status>=200&&xhr.status<300) {
-      try { cb(null, JSON.parse(xhr.responseText)); } catch(e) { cb(e); }
-    } else { cb(new Error('HTTP '+xhr.status)); }
-  };
-  xhr.onerror = function(){ cb(new Error('Network error')); };
-  xhr.send(opts.body||null);
-}
 
 function loadData() {
-  apiFetch('https://api.jsonbin.io/v3/b/'+binId+'/latest', {}, function(err,res) {
-    if (err) { renderAll(); return; }
-    var d = res.record;
-    results = d.results||[];
-    schedules = d.schedules||[];
-    // NEVER load teams from JSONBin — HTML is always source of truth
-    // Only load customRules
-    if (d.customRules) customRules = d.customRules;
-    // Push current hardcoded teams back to JSONBin to keep it in sync
-    // This fixes stale team data for all users
-    apiFetch('https://api.jsonbin.io/v3/b/'+binId, {method:'PUT',
-      body:JSON.stringify({results:results,schedules:schedules,teams:TEAMS,customRules:customRules})
-    }, function(){});
-    renderAll();
-  });
+  fetch('/api/results')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      results = d.results||[];
+      schedules = d.schedules||[];
+      if (d.customRules) customRules = d.customRules;
+      renderAll();
+    })
+    .catch(function(){ renderAll(); });
 }
 
 function saveData(cb) {
@@ -961,7 +939,7 @@ function editSched(id) {
 
 function deleteSched(id) {
   schedules=schedules.filter(function(s){return s.id!==id;});
-  saveData(function(){toast('Removed','ok');renderAll();});
+   saveData(function(){toast('Removed','ok');renderAll();});
 }
 
 function downloadICS(id) {
