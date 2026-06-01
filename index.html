@@ -554,7 +554,7 @@ function calcStandings() {
     var mine = results.filter(function(r){ return r.t1===t.id||r.t2===t.id; });
     var survived = mine.reduce(function(s,r){ return s+(r.t1===t.id?(r.surv1||[]).length:(r.surv2||[]).length); },0);
     var meetings = mine.reduce(function(s,r){ return s+(r.t1===t.id?(r.meet1||0):(r.meet2||0)); },0);
-    return {id:t.id,name:t.name,color:t.color,played:mine.length,survived:survived,meetings:meetings,pts:survived+meetings*2};
+    return {id:t.id,name:t.name,color:t.color,played:mine.length,survived:survived,meetings:meetings,pts:survived+meetings};
   }).sort(function(a,b){ return b.pts-a.pts||b.meetings-a.meetings||b.survived-a.survived; });
 }
 
@@ -838,6 +838,54 @@ function saveResult() {
   });
 }
 
+  function editResult(mid) {
+  var r=results.filter(function(x){return String(x.mid)===String(mid);})[0];
+  if(!r) return;
+  var isKo=typeof r.mid!=='number';
+  if(isKo){
+    setResultMode('ko');
+    var round=r.mid.replace('ko-','');
+    document.getElementById('ko-round-sel').value=round;
+    populateKoSelects();
+    document.getElementById('ko-t1').value=r.t1;
+    document.getElementById('ko-t2').value=r.t2;
+    loadKoChips();
+  } else {
+    setResultMode('group');
+    var sel=document.getElementById('match-sel');
+    var exists=false;
+    for(var i=0;i<sel.options.length;i++){if(parseInt(sel.options[i].value)===r.mid){exists=true;break;}}
+    if(!exists){
+      var f=FIXTURES.filter(function(x){return x[0]===r.mid;})[0];
+      var t1=getTeam(f[1]),t2=getTeam(f[2]);
+      var opt=document.createElement('option');
+      opt.value=r.mid;
+      opt.textContent=r.mid+': '+(t1?t1.name:f[1])+' vs '+(t2?t2.name:f[2]);
+      sel.appendChild(opt);
+    }
+    sel.value=r.mid;
+    loadChips();
+  }
+  document.getElementById('lead-inp').value=r.lead||'';
+  document.getElementById('lead-link-inp').value=r.leadLink||'';
+  document.getElementById('recording-inp').value=r.recording||'';
+  setTimeout(function(){
+    document.querySelectorAll('#surv-chips .chip').forEach(function(c){
+      var inSurv=(c.dataset.tid===r.t1&&(r.surv1||[]).indexOf(c.dataset.p)!==-1)||(c.dataset.tid===r.t2&&(r.surv2||[]).indexOf(c.dataset.p)!==-1);
+      c.classList.toggle('on',inSurv);
+    });
+    var t1mi=0,t2mi=0;
+    document.querySelectorAll('#meet-chips .chip').forEach(function(c){
+      c.classList.remove('on');
+      if(c.dataset.tid===r.t1&&(r.surv1||[]).indexOf(c.dataset.p)!==-1&&t1mi<(r.meet1||0)){c.classList.add('on');t1mi++;}
+      else if(c.dataset.tid===r.t2&&(r.surv2||[]).indexOf(c.dataset.p)!==-1&&t2mi<(r.meet2||0)){c.classList.add('on');t2mi++;}
+    });
+    document.getElementById('save-btn').disabled=false;
+  },50);
+  showMTab('m-results',document.querySelectorAll('.mnb')[0]);
+  document.querySelector('.mbody').scrollTop=0;
+}
+
 function deleteResult(mid) {
   if(!confirm('Delete this result?')) return;
   results=results.filter(function(r){return String(r.mid)!==String(mid);});
@@ -873,7 +921,8 @@ function renderLog() {
     html+='<span style="color:'+(t2?t2.color:'#888')+';font-weight:700;">'+(t2?t2.name:r.t2)+'</span> '+pts2+'pts';
     if(r.lead) html+='<br><span style="color:var(--mut);font-size:11px;">'+r.lead+(r.leadLink?'  <a href="'+r.leadLink+'" target="_blank" style="color:var(--acc2);font-size:11px;">View in Salesforce ↗</a>':'')+'</span>';
     html+='</div>';
-    html+='<button class="ldel" onclick="deleteResult(\''+r.mid+'\')">✕</button></div>';
+    html+='<button class="ldel" style="color:var(--acc2);margin-right:6px;" onclick="editResult(\''+r.mid+'\')">✎</button>';
+html+='<button class="ldel" onclick="deleteResult(\''+r.mid+'\')">✕</button></div>';
   });
   body.innerHTML=html;
 }
@@ -1460,14 +1509,14 @@ function renderStats() {
   var topTeam=standings[0];
   var mostMeetingsTeam=standings.slice().sort(function(a,b){return b.meetings-a.meetings;})[0];
 
-  function statCard(emoji,label,value,sub,color){
-    return '<div style="background:#fff;border:1px solid var(--bdr);border-radius:10px;padding:16px;border-top:3px solid '+(color||'var(--acc)')+';box-shadow:0 1px 4px rgba(0,0,0,0.04);">'
-      +'<div style="font-size:20px;margin-bottom:6px;">'+emoji+'</div>'
-      +'<div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;">'+label+'</div>'
-      +'<div style="font-size:16px;font-weight:700;color:var(--nav);">'+value+'</div>'
-      +(sub?'<div style="font-size:11px;color:var(--mut);margin-top:2px;">'+sub+'</div>':'')
-      +'</div>';
-  }
+function statCard(emoji,label,entries,color,unit){
+  var html='<div style="background:#fff;border:1px solid var(--bdr);border-radius:10px;padding:16px;border-top:3px solid '+(color||'var(--acc)')+';box-shadow:0 1px 4px rgba(0,0,0,0.04);">';
+  html+='<div style="font-size:20px;margin-bottom:6px;">'+emoji+'</div>';
+  html+='<div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">'+label+'</div>';
+  if(!entries||!entries.length){html+='<div style="font-size:14px;font-weight:700;color:var(--mut);">—</div>';}
+  else{var topVal=entries[0].value;entries.slice(0,3).forEach(function(e,i){var isTop=e.value===topVal;html+='<div style="display:flex;align-items:center;justify-content:space-between;'+(i>0?'border-top:1px solid var(--bdr);margin-top:5px;padding-top:5px;':'')+'">';html+='<span style="font-size:'+(isTop?'13px':'11px')+';font-weight:'+(isTop?'700':'400')+';color:'+(isTop?'var(--nav)':'var(--mut)')+';">'+e.name+'</span>';html+='<span style="font-size:12px;font-weight:700;color:'+(isTop?color:'var(--mut)')+';">'+e.value+(unit?' '+unit:'')+'</span>';html+='</div>';});}
+  html+='</div>';return html;
+}
 
   function playerRow(rank,p){
     return '<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;background:'+(rank===1?'rgba(201,168,76,0.06)':'#fff')+';border-bottom:1px solid var(--bdr);">'
@@ -1491,11 +1540,13 @@ function renderStats() {
 
   var html='';
 
+  var html='';
+
   html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:24px;">';
-  html+=statCard('🏆','Leading team',topTeam?topTeam.name:'—',topTeam?topTeam.pts+' pts':'','var(--acc)');
-  html+=statCard('⚽','Top scorer',topScorers[0]?topScorers[0].name:'—',topScorers[0]?topScorers[0].pts+' pts':'','var(--acc2)');
-  html+=statCard('📅','Most meetings',topBooker?topBooker.name:'—',topBooker?topBooker.meetings+' booked':'','var(--grn)');
-  html+=statCard('🔥','Most meetings (team)',mostMeetingsTeam?mostMeetingsTeam.name:'—',mostMeetingsTeam?mostMeetingsTeam.meetings+' booked':'','var(--dan)');
+html+=statCard('🏆','Leading team',standings.slice(0,3).map(function(t){return{name:t.name,value:t.pts};}),'var(--acc)','pts');
+html+=statCard('⚽','Top scorer',allPlayers.slice(0,3).map(function(p){return{name:p.name,value:p.pts};}),'var(--acc2)','pts');
+html+=statCard('📅','Most meetings',allPlayers.slice().sort(function(a,b){return b.meetings-a.meetings;}).filter(function(p){return p.meetings>0;}).slice(0,3).map(function(p){return{name:p.name,value:p.meetings};}),'var(--grn)','booked');
+html+=statCard('🔥','Most meetings (team)',standings.slice().sort(function(a,b){return b.meetings-a.meetings;}).slice(0,3).map(function(t){return{name:t.name,value:t.meetings};}),'var(--dan)','booked');
   html+='</div>';
 
   html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
